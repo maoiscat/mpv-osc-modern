@@ -21,7 +21,7 @@ local user_opts = {
     vidscale = false,           -- scale the controller with the video?
     --valign = 0.8,               -- vertical alignment, -1 (top) to 1 (bottom)
     --halign = 0,                 -- horizontal alignment, -1 (left) to 1 (right)
-    barmargin = 0,              -- vertical margin of top/bottombar
+    --barmargin = 0,              -- vertical margin of top/bottombar
     --boxalpha = 40,              -- alpha of the background box,
                                 -- 0 (opaque) to 255 (fully transparent)
     hidetimeout = 1000,         -- duration in ms until the OSC hides if no
@@ -42,7 +42,7 @@ local user_opts = {
     seekrangeseparate = true,   -- wether the seekranges overlay on the bar-style seekbar
     seekrangealpha = 0,       	-- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
-    title = "　${media-title}",   -- string compatible with property-expansion
+    title = "${media-title}",   -- string compatible with property-expansion
                                 -- to be shown as OSC title
     timetotal = true,          -- display total time instead of remaining time?
     timems = false,             -- display timecodes with milliseconds?
@@ -79,11 +79,8 @@ local osc_styles = {
     Ctrl4 = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&HFFFFFF\\fs24\\fnmaterial-design-iconic-font}",
     Time = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&H000000\\fs17\\fn" .. user_opts.font .. "}",
     Tooltip = "{\\blur2\\bord1\\1c&HFFFFFF\\3c&H000000\\fs20\\fn" .. user_opts.font .. "}",
-    
+	Title = "{\\blur1\\bord0.5\\1c&HFFFFFF\\3c&H0\\fs48\\q2\\fn" .. user_opts.font .. "}",
     WinCtrl = "{\\blur2\\bord0.5\\1c&HFFFFFF\\3c&H0\\fs20\\fnmpv-osd-symbols}",
-    WinTitle = "{\\blur2\\bord0.5\\1c&HFFFFFF\\3c&H0\\fs18\\q2fn" .. user_opts.font .. "}",
-    WinBar = "{\\1c&H0}",
-	
     elementDown = "{\\1c&H999999}",
 }
 
@@ -805,7 +802,7 @@ function render_elements(master_ass)
 			buttontext = buttontext:gsub(":%((.?.?.?)%) unknown ", ":%(%1%)")  --gsub("%) unknown %(\"", "")
 
             local maxchars = element.layout.button.maxchars
-            -- 使用consolas字体时1个中文字符大约为1.5个英文字符
+            -- 认为1个中文字符约等于1.5个英文字符
             -- local charcount = buttontext:len()-  (buttontext:len()-select(2, buttontext:gsub('[^\128-\193]', '')))/1.5
             local charcount = (buttontext:len() + select(2, buttontext:gsub('[^\128-\193]', ''))*2) / 3
             if not (maxchars == nil) and (charcount > maxchars) then
@@ -828,6 +825,11 @@ function render_elements(master_ass)
                     local an = 1
                     local ty = element.hitbox.y1
                     local tx = get_virt_mouse_pos()
+                    
+                    if ty < osc_param.playresy / 2 then
+						ty = element.hitbox.y2
+						an = 7
+					end
 
                     -- tooltip label
                     if type(element.tooltipF) == "function" then
@@ -1060,15 +1062,6 @@ function window_controls(topbar)
 
     local lo
 
-    -- Background Bar
-    -- new_element("WinBg", "box")
-    -- lo = add_layout("WinBg")
-    -- lo.geometry = 
-	--	{x = controlbox_left, y = wc_geo.y, an = wc_geo.an, w = wc_geo.w, h = wc_geo.h}
-    -- lo.layer = 10
-    -- lo.style = osc_styles.WinBar
-    -- lo.alpha[1] = user_opts.boxalpha
-
     local button_y = wc_geo.y - (wc_geo.h / 2)
     local first_geo =
         {x = controlbox_left + 3, y = button_y, an = 4, w = 25, h = 25}
@@ -1125,7 +1118,7 @@ function window_controls(topbar)
     
     -- deadzone below window controls
     local sh_area_y0, sh_area_y1
-    sh_area_y0 = user_opts.barmargin
+    sh_area_y0 = 0
     sh_area_y1 = (wc_geo.y + (wc_geo.h / 2)) +
                  get_align(1 - (2 * user_opts.deadzonesize),
                  osc_param.playresy - (wc_geo.y + (wc_geo.h / 2)), 0, 0)
@@ -1139,26 +1132,6 @@ function window_controls(topbar)
         osc_param.video_margins.t = wc_geo.h / osc_param.playresy
     end
 
-    -- Window Title
-    ne = new_element("WinTitle", "button")
-    ne.content = function ()
-    local title = mp.command_native({"expand-text", user_opts.title})
-        -- escape ASS, and strip newlines and trailing slashes
-        title = title:gsub("\\n", " "):gsub("\\$", ""):gsub("{","\\{")
-        return not (title == "") and title or "mpv"
-    end
-    lo = add_layout("WinTitle")
-    lo.geometry =
-        { x = titlebox_left + 25, y = wc_geo.y - wc_geo.h / 2, an = 4,
-          w = titlebox_w, h = wc_geo.h }
-    lo.style = string.format("%s{\\clip(%f,%f,%f,%f)}",
-        osc_styles.WinTitle,
-        titlebox_left + 25, wc_geo.y - wc_geo.h,
-        titlebox_right - 25 , wc_geo.y)
-	lo.alpha[3] = 0
-
-    add_area("window-controls-title",
-             titlebox_left, 0, titlebox_right, wc_geo.h)
 end
 
 --
@@ -1218,18 +1191,16 @@ layouts["default"] = function ()
     --
     -- Seekbar
     --
-	geo ={x = refX , y = refY - 96 , an = 5, w = osc_geo.w - 50, h = 2}
     new_element("bgbar1", "box")
     lo = add_layout("bgbar1")
-    lo.geometry = geo
+    lo.geometry = {x = refX , y = refY - 96 , an = 5, w = osc_geo.w - 50, h = 2}
     lo.layer = 13
     lo.style = osc_styles.SeekbarBg
     lo.alpha[1] = 128
     lo.alpha[3] = 128
 
-	geo ={x = refX, y = refY - 96 , an = 5, w = osc_geo.w - 50 + 16*user_opts.seekbarhandlesize, h = 16}
     lo = add_layout("seekbar")
-    lo.geometry = geo
+    lo.geometry = {x = refX, y = refY - 96 , an = 5, w = osc_geo.w - 50 + 16*user_opts.seekbarhandlesize, h = 16}
 	lo.style = osc_styles.SeekbarFg
     lo.slider.border = 0
     lo.slider.gap = 7
@@ -1286,6 +1257,13 @@ layouts["default"] = function ()
 	lo = add_layout("tog_info")
     lo.geometry = {x = osc_geo.w - 125, y = refY - 40, an = 5, w = 24, h = 24}
     lo.style = osc_styles.Ctrl3
+    
+    geo = { x = 25, y = refY - 132, an = 1, w = osc_geo.w - 50, h = 48 }
+    lo = add_layout("media_title")
+    lo.geometry = geo
+    lo.style = string.format("%s{\\clip(%f,%f,%f,%f)}", osc_styles.Title,
+								geo.x, geo.y - geo.h, geo.x + geo.w , geo.y)
+	lo.alpha[3] = 0
 end
 
 -- Validate string type user options
@@ -1549,7 +1527,7 @@ function osc_init()
     --cy_sub
     ne = new_element("cy_sub", "button")
     ne.enabled = (#tracks_osc.sub > 0)
-    ne.visible = (osc_param.playresx >= 540)
+    ne.visible = (osc_param.playresx >= 600)
     ne.content = "\xEF\x8F\x93"
     ne.tooltip_style = osc_styles.Tooltip
     ne.tooltipF = function ()
@@ -1592,10 +1570,23 @@ function osc_init()
     --tog_info
     ne = new_element("tog_info", "button")
     ne.content = ""
-    ne.visible = (osc_param.playresx >= 540)
+    ne.visible = (osc_param.playresx >= 600)
     ne.eventresponder["mbtn_left_up"] =
         function () mp.command("script-binding stats/display-stats-toggle") end
 
+    -- Media title
+    ne = new_element("media_title", "button")
+    ne.content = function ()
+		local title = mp.command_native({"expand-text", user_opts.title})
+        if state.paused then
+			title = title:gsub("\\n", " "):gsub("\\$", ""):gsub("{","\\{")
+		else
+			title = " "
+		end
+        return not (title == "") and title or " "
+    end
+    ne.visible = osc_param.playresy >= 320
+    
     --seekbar
     ne = new_element("seekbar", "slider")
 
