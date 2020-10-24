@@ -34,7 +34,7 @@ local user_opts = {
     iamaprogrammer = false,     -- use native mpv values and disable OSC
                                 -- internal track list management (and some
                                 -- functions that depend on it)
-    font = "mpv-osd-symbols",	-- default osc font
+	font = "mpv-osd-symbols",	-- default osc font
     layout = "default",			-- default only!!
     seekbarstyle = "knob",      -- bar, diamond or knob
     seekbarhandlesize = 1,		-- size ratio of the diamond and knob handle
@@ -70,7 +70,7 @@ local osc_param = { -- calculated by osc_init()
 }
 
 local osc_styles = {
-	TransBg = "{\\blur0\\bord0\\1c&H000000}",
+	TransBg = "{\\blur180\\bord120\\1c&H000000\\3c&H000000}",
 	SeekbarBg = "{\\blur0\\bord0\\1c&HFFFFFF}",
 	SeekbarFg = "{\\blur0\\bord0\\1c&HE39C42}",
     Ctrl1 = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&HFFFFFF\\fs36\\fnmaterial-design-iconic-font}",
@@ -1168,18 +1168,14 @@ layouts["default"] = function ()
     -- Controller Background
     --
     
-    local lo, ind
-	for ind = 0, 179 do
-		new_element("TransBg" .. ind, "box")
-		lo = add_layout("TransBg" .. ind)
+	local lo
 
-		lo.geometry = {x = posX, y = posY - ind, an = 1, w = osc_w, h = 1}
-		lo.layer = 10
-		lo.style = osc_styles.TransBg
-		lo.alpha[1] = (1-2^(-ind/180))*2*255
-		--lo.alpha[1] = ind+75
-		--lo.alpha[1] = ind * 255 / 180.0
-	end
+	new_element("TransBg", "box")
+	lo = add_layout("TransBg")
+	lo.geometry = {x = posX, y = posY, an = 7, w = osc_w, h = 1}
+	lo.style = osc_styles.TransBg
+	lo.layer = 10
+	lo.alpha[3] = 0
 	
     --
     -- Alignment
