@@ -10,7 +10,6 @@ local utils = require 'mp.utils'
 --
 -- Parameters
 --
--- default user option values
 -- no need to touch, change them in osc.conf
 local user_opts = {
     showwindowed = true,        -- show OSC when windowed?
@@ -1503,9 +1502,9 @@ function osc_init()
     ne.content = "\xEF\x8E\xB7"
     ne.tooltip_style = osc_styles.Tooltip
     ne.tooltipF = function ()
-		local msg = "关闭"
+		local msg = "OFF"
         if not (get_track("audio") == 0) then
-            msg = ("音频 [" .. get_track("audio") .. " ∕ " .. #tracks_osc.audio .. "] ")
+            msg = ("Audio Track [" .. get_track("audio") .. " ∕ " .. #tracks_osc.audio .. "] ")
             local prop = mp.get_property("current-tracks/audio/lang")
             if not prop then
 				prop = "unkown"
@@ -1533,9 +1532,9 @@ function osc_init()
     ne.content = "\xEF\x8F\x93"
     ne.tooltip_style = osc_styles.Tooltip
     ne.tooltipF = function ()
-		local msg = "关闭"
+		local msg = "OFF"
         if not (get_track("sub") == 0) then
-            msg = ("字幕 [" .. get_track("sub") .. " ∕ " .. #tracks_osc.sub .. "] ")
+            msg = ("Subtitle [" .. get_track("sub") .. " ∕ " .. #tracks_osc.sub .. "] ")
             local prop = mp.get_property("current-tracks/sub/lang")
             if not prop then
 				prop = "unkown"
