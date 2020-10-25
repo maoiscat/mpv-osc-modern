@@ -1064,11 +1064,11 @@ function window_controls(topbar)
 
     local button_y = wc_geo.y - (wc_geo.h / 2)
     local first_geo =
-        {x = controlbox_left + 3, y = button_y, an = 4, w = 25, h = 25}
+        {x = controlbox_left + 27, y = button_y, an = 5, w = 40, h = wc_geo.h}
     local second_geo =
-        {x = controlbox_left + 46, y = button_y, an = 4, w = 25, h = 25}
+        {x = controlbox_left + 69, y = button_y, an = 5, w = 40, h = wc_geo.h}
     local third_geo =
-        {x = controlbox_left + 92, y = button_y, an = 4, w = 25, h = 25}
+        {x = controlbox_left + 115, y = button_y, an = 5, w = 40, h = wc_geo.h}
 
     -- Window control buttons use symbols in the custom mpv osd font
     -- because the official unicode codepoints are sufficiently
