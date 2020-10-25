@@ -1,6 +1,10 @@
 # mpv-osc-metro
 Yet another mpv osc script.
 
+metro.lua       -- the basic osc script.
+
+metro--alt.lua  -- an alternative script, which ALWAYS show osc on pause. besides some styles are slightly different.
+
 mpv.conf
 
 > osc=no
