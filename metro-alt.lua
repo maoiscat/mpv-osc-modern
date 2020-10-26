@@ -10,6 +10,7 @@ local utils = require 'mp.utils'
 --
 -- Parameters
 --
+-- default user option values
 -- no need to touch, change them in osc.conf
 local user_opts = {
     showwindowed = true,        -- show OSC when windowed?
@@ -39,7 +40,7 @@ local user_opts = {
     seekbarhandlesize = 1,		-- size ratio of the diamond and knob handle
     seekrangestyle = "bar",		-- bar, line, slider, inverted or none
     seekrangeseparate = true,   -- wether the seekranges overlay on the bar-style seekbar
-    seekrangealpha = 0,       	-- transparency of seekranges
+    seekrangealpha = 0,      	-- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
     title = "${media-title}",   -- string compatible with property-expansion
                                 -- to be shown as OSC title
@@ -641,7 +642,7 @@ function render_elements(master_ass)
             local foV = slider_lo.border + slider_lo.gap
             local innerH = elem_geo.h - (2 * foV)
             local seekRanges = element.slider.seekRangesF()
-            local seekRangeLineHeight = innerH / 5
+            local seekRangeLineHeight = math.max(innerH / 5, 1)
 
             if slider_lo.stype ~= "bar" then
                 foH = elem_geo.h / 2
@@ -655,8 +656,6 @@ function render_elements(master_ass)
                 if slider_lo.stype ~= "bar" then
                     local r = innerH / 2							-- Bar radius
                     local rh = foH * user_opts.seekbarhandlesize	-- Handle radius
-                    s_min = s_min + foV
-                    s_max = s_max - foV
                     ass_draw_rr_h_cw(elem_ass, xp - rh, foH - rh,
                                      xp + rh, foH + rh,
                                      rh, slider_lo.stype == "diamond")
@@ -674,8 +673,8 @@ function render_elements(master_ass)
                         -- Punch holes for the seekRanges to be drawn later
                         for _,range in pairs(seekRanges) do
                             if range["start"] < pos then
-                                local pstart = get_slider_ele_pos_for(element, range["start"])
-                                local pend = xp
+                                local pstart = get_slider_ele_pos_for(element, range["start"]) - foV
+                                local pend = xp + foV
 
                                 if pos > range["end"] then
                                     pend = get_slider_ele_pos_for(element, range["end"])
@@ -694,8 +693,8 @@ function render_elements(master_ass)
                                      elem_geo.w - foH + innerH / 15, foH + innerH / 15,
                                      0, slider_lo.stype == "diamond", innerH / 15)
                     for _,range in pairs(seekRanges or {}) do
-                        local pstart = get_slider_ele_pos_for(element, range["start"])
-                        local pend = get_slider_ele_pos_for(element, range["end"])
+                        local pstart = get_slider_ele_pos_for(element, range["start"]) - foV
+                        local pend = get_slider_ele_pos_for(element, range["end"]) + foV
                         ass_draw_rr_h_ccw(elem_ass, pstart, foH - innerH / 21,
                                           pend, foH + innerH / 21,
                                           innerH / 21, slider_lo.stype == "diamond")
@@ -712,8 +711,8 @@ function render_elements(master_ass)
                 end
 
                 for _,range in pairs(seekRanges) do
-                    local pstart = get_slider_ele_pos_for(element, range["start"])
-                    local pend = get_slider_ele_pos_for(element, range["end"])
+                    local pstart = get_slider_ele_pos_for(element, range["start"]) - foV
+                    local pend = get_slider_ele_pos_for(element, range["end"]) + foV
 
                     if slider_lo.rtype == "slider" then
                         ass_draw_rr_h_cw(elem_ass, pstart, foH - innerH / 21,
@@ -1201,7 +1200,7 @@ layouts["default"] = function ()
     lo.alpha[3] = 128
 
     lo = add_layout("seekbar")
-    lo.geometry = {x = refX, y = refY - 96 , an = 5, w = osc_geo.w - 50 + 16*user_opts.seekbarhandlesize, h = 16}
+    lo.geometry = {x = refX, y = refY - 96 , an = 5, w = osc_geo.w - 50, h = 16}
 	lo.style = osc_styles.SeekbarFg
     lo.slider.border = 0
     lo.slider.gap = 7
@@ -1244,19 +1243,19 @@ layouts["default"] = function ()
     lo.style = osc_styles.Time	
 
     lo = add_layout("cy_audio")
-	lo.geometry = {x = 75, y = refY - 40, an = 5, w = 24, h = 24}
+	lo.geometry = {x = 37, y = refY - 40, an = 5, w = 24, h = 24}
     lo.style = osc_styles.Ctrl3	
 	
     lo = add_layout("cy_sub")
-    lo.geometry = {x = 125, y = refY - 40, an = 5, w = 24, h = 24}
+    lo.geometry = {x = 87, y = refY - 40, an = 5, w = 24, h = 24}
     lo.style = osc_styles.Ctrl3
 
 	lo = add_layout("tog_fs")
-    lo.geometry = {x = osc_geo.w - 75, y = refY - 40, an = 5, w = 24, h = 24}
+    lo.geometry = {x = osc_geo.w - 37, y = refY - 40, an = 5, w = 24, h = 24}
     lo.style = osc_styles.Ctrl4    
 
 	lo = add_layout("tog_info")
-    lo.geometry = {x = osc_geo.w - 125, y = refY - 40, an = 5, w = 24, h = 24}
+    lo.geometry = {x = osc_geo.w - 87, y = refY - 40, an = 5, w = 24, h = 24}
     lo.style = osc_styles.Ctrl3
     
     geo = { x = 25, y = refY - 132, an = 1, w = osc_geo.w - 50, h = 48 }
