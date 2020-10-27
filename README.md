@@ -3,7 +3,9 @@ Yet another mpv osc script.
 
 metro.lua       -- the basic osc script.
 
-metro--alt.lua  -- an alternative script, which ALWAYS show osc on pause. besides some styles are slightly different.
+metro-alt.lua  -- an alternative script, which ALWAYS show osc on pause. besides some styles are slightly different.
+
+metro-chs.lua -- metro-alt.lua in chinese
 
 mpv.conf
 
