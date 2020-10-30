@@ -11,7 +11,9 @@ copy either one of the .lua file into "~~/scripts/" folder, and remove other osc
 
 mpv.conf
 
-`osc=no`
+```
+osc=no
+```
 
 besides i suggest a white backgound when idling
 
@@ -24,7 +26,9 @@ background=1
 
 osc.conf
 
-`font=Segoe UI`
+```
+font=Segoe UI
+```
 
 It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work.
 
