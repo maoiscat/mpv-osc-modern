@@ -1,20 +1,31 @@
 # mpv-osc-metro
 Yet another mpv osc script.
 
-metro.lua       -- the basic osc script.
+metro.lua     -- osc script
 
-metro-alt.lua  -- an alternative script, which ALWAYS show osc on pause. besides some styles are slightly different.
+metro-chs.lua -- the same osc script with texts in chinese
 
-metro-chs.lua -- metro-alt.lua in chinese
+# How to use
+
+copy either one of the .lua file into "~~/scripts/" folder, and remove other osc scripts.
 
 mpv.conf
 
-> osc=no
+`osc=no`
+
+besides i suggest a white backgound when idling
+
+```
+[idle]
+profile-cond=p["idle-active"]
+profile-restore=copy-equal
+background=1
+```
 
 osc.conf
 
-> font=Segoe UI
+`font=Segoe UI`
 
-It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work. And make sure there is no other osc script in "Scripts" folder!
+It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work.
 
 ![img](https://github.com/maoiscat/mpv-osc-metro/blob/main/preview.png)
