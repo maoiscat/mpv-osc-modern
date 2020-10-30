@@ -1,5 +1,5 @@
 # mpv-osc-metro
-Yet another mpv osc script based on the original osc of mpv.
+Yet another mpv osc script. 
 
 metro.lua     -- osc script
 
