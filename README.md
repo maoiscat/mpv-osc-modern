@@ -30,6 +30,6 @@ osc.conf
 font=Segoe UI
 ```
 
-It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work.
+It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work. just put the ttf in "~~/fonts" folder.
 
 ![img](https://github.com/maoiscat/mpv-osc-metro/blob/main/preview.png)
