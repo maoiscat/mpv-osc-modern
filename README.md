@@ -1,9 +1,9 @@
 # mpv-osc-metro
-Yet another mpv osc script.
+Yet another mpv osc script based on the original osc of mpv.
 
 metro.lua     -- osc script
 
-metro-chs.lua -- the same osc script with texts in chinese
+metro-chs.lua -- the same script with texts in chinese
 
 # How to use
 
