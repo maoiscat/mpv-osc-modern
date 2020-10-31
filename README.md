@@ -31,7 +31,15 @@ edit osc.conf in "\~\~/script-opts/" folder, however many options are changed, s
 
 like the built-in script, some buttons may accept multiple mouse actions, here is a list:
 
-* seekbar -- mbtn_left: seek to chosen position. mbtn_right: seek to the head of chosen chapter
-* skip_back/forward -- mbtn_left: skip 5 seconds.   mbtn_right: skip 60 seconds.
-* playlist_back/forwad -- mbtn_left: play previous/netx file.   mbtn_right: show playlist.
-* cycle_audio/subtitle -- mbtn_left/right: cycle to next/previous track.    mbtn_mid: show track list.
+## seekbar
+* mbtn_left: seek to chosen position.
+* mbtn_right: seek to the head of chosen chapter
+## skip_back/forward
+* mbtn_left: skip 5 seconds.
+* mbtn_right: skip 60 seconds.
+## playlist_back/forwad
+* mbtn_left: play previous/netx file.
+* mbtn_right: show playlist.
+## cycle_audio/subtitle
+* mbtn_left/right: cycle to next/previous track.
+* mbtn_mid: show track list.
