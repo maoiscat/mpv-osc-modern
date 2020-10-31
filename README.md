@@ -1,19 +1,19 @@
 # mpv-osc-metro
-Yet another mpv osc script. 
+Yet another mpv osc script, based on the osc built in mpv
 
-* metro.lua     --osc script
+![img](https://github.com/maoiscat/mpv-osc-metro/blob/main/preview.png)
 
-* metro-chs.lua --the same script with texts in chinese
+# How to install
 
-# How to use
-
-copy either one of the .lua file into "\~\~/scripts/" folder, and remove other osc scripts.
+put the .lua file into "\~\~/scripts/" folder, and remove other osc scripts.
 
 mpv.conf
 
 ```
 osc=no
 ```
+
+It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work. just put the ttf in "\~\~/fonts" folder.
 
 besides i suggest a white backgound when idling
 
@@ -23,13 +23,14 @@ profile-cond=p["idle-active"]
 profile-restore=copy-equal
 background=1
 ```
+# How to config
 
-to change osc fonts edit osc.conf in "\~\~/script-opts/" folder
+edit osc.conf in "\~\~/script-opts/" folder, however many options are changed, so refer to the user_opts variable in the script file for details.
 
-```
-font=Segoe UI
-```
+# Buttons
 
-It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work. just put the ttf in "\~\~/fonts" folder.
+like the built-in script, some buttons may accept multiple mouse actions, here is a list:
 
-![img](https://github.com/maoiscat/mpv-osc-metro/blob/main/preview.png)
+* skip_back/forward -- mbtn_left: skip 5 seconds.   mbtn_right: skip 60 seconds.
+* playlist_back/forwad -- mbtn_left: play previous/netx file.   mbtn_right: show playlist.
+* cycle_audio/subtitle -- mbtn_left/right: cycle to next/previous track.    mbtn_mid: show track list.
