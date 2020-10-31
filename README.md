@@ -1,5 +1,5 @@
 # mpv-osc-metro
-Yet another mpv osc script, based on the osc built in mpv
+Yet another mpv osc script, based on mpv built-in osc
 
 ![img](https://github.com/maoiscat/mpv-osc-metro/blob/main/preview.png)
 
