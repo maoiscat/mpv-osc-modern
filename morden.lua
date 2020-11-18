@@ -1,6 +1,6 @@
 -- by maoiscat
 -- email:valarmor@163.com
--- https://github.com/maoiscat/mpv-osc-metro
+-- https://github.com/maoiscat/mpv-osc-morden
 
 local assdraw = require 'mp.assdraw'
 local msg = require 'mp.msg'
