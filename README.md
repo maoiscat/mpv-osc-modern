@@ -11,7 +11,8 @@ put the .lua file into "\~\~/scripts/" folder, and remove other osc scripts.
 mpv.conf
 
 ```
-osc=no
+osc = no
+border = no # Optional, but recommended
 ```
 
 It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work. just put the ttf in "\~\~/fonts" folder.
