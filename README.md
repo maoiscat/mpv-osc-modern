@@ -1,5 +1,5 @@
 # mpv-osc-morden x
-Yet another mpv osc script, based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc-morden/), which is in turn mpv built-in osc.
+Yet another mpv osc script, based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc-morden/), which is in turn based on mpv's built-in osc.
 Mostly minor changes including repurposing the skip_back/forward buttons to go to the previous/next chapter and fixing the play/pause button.
 
 ![img](https://github.com/cyl0/mpv-osc-morden-x/blob/main/preview.png)
