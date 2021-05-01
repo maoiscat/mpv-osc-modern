@@ -1,6 +1,9 @@
--- by maoiscat
+-- original by maoiscat
 -- email:valarmor@163.com
 -- https://github.com/maoiscat/mpv-osc-morden
+
+-- fork by cyl0
+-- https://github.com/cyl0/mpv-osc-morden
 
 local assdraw = require 'mp.assdraw'
 local msg = require 'mp.msg'
@@ -18,12 +21,12 @@ local user_opts = {
     scalewindowed = 1,          -- scaling of the controller when windowed
     scalefullscreen = 1,        -- scaling of the controller when fullscreen
     scaleforcedwindow = 2,      -- scaling when rendered on a forced window
-    vidscale = false,           -- scale the controller with the video?
-    hidetimeout = 1000,         -- duration in ms until the OSC hides if no
+    vidscale = true,           -- scale the controller with the video?
+    hidetimeout = 1500,         -- duration in ms until the OSC hides if no
                                 -- mouse movement. enforced non-negative for the
                                 -- user, but internally negative is 'always-on'.
-    fadeduration = 500,         -- duration of fade out in ms, 0 = no fade
-    minmousemove = 3,           -- minimum amount of pixels the mouse has to
+    fadeduration = 250,         -- duration of fade out in ms, 0 = no fade
+    minmousemove = 2,           -- minimum amount of pixels the mouse has to
                                 -- move between ticks to make the OSC show up
     iamaprogrammer = false,     -- use native mpv values and disable OSC
                                 -- internal track list management (and some
@@ -31,7 +34,7 @@ local user_opts = {
 	font = 'mpv-osd-symbols',	-- default osc font
     seekbarhandlesize = 1.0,	-- size ratio of the slider handle, range 0 ~ 1
     seekrange = true,			-- show seekrange overlay
-    seekrangealpha = 128,      	-- transparency of seekranges
+    seekrangealpha = 64,      	-- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
     title = '${media-title}',   -- string compatible with property-expansion
                                 -- to be shown as OSC title
@@ -45,7 +48,7 @@ local user_opts = {
 -- Localization
 local language = {
 	['eng'] = {
-	    welcome = '{\\fs24\\1c&H0&\\3c&HFFFFFF&}Drop files or URLs to play here.',  -- this text appears when mpv starts
+	    welcome = '{\\fs24\\1c&H0&\\1c&HFFFFFF&}Drop files or URLs to play here.',  -- this text appears when mpv starts
 		off = 'OFF',
 		na = 'n/a',
 		none = 'none',
@@ -1180,9 +1183,9 @@ function osc_init()
 
     ne.content = function ()
         if mp.get_property('pause') == 'yes' then
-            return ('\xEF\x8E\xA7')
-        else
             return ('\xEF\x8E\xAA')
+        else
+            return ('\xEF\x8E\xA7')
         end
     end
     ne.eventresponder['mbtn_left_up'] =
@@ -1195,28 +1198,32 @@ function osc_init()
 
     ne.softrepeat = true
     ne.content = '\xEF\x8E\xA0'
+    ne.enabled = (have_ch) -- disables button when no chapters available.
     ne.eventresponder['mbtn_left_down'] =
         --function () mp.command('seek -5') end
-        function () mp.commandv('seek', -5, 'relative', 'keyframes') end
-    ne.eventresponder['shift+mbtn_left_down'] =
-        function () mp.commandv('frame-back-step') end
-    ne.eventresponder['mbtn_right_down'] =
+        --function () mp.commandv('seek', -5, 'relative', 'keyframes') end
+        function () mp.commandv("add", "chapter", -1) end
+    --ne.eventresponder['shift+mbtn_left_down'] =
+        --function () mp.commandv('frame-back-step') end
+    --ne.eventresponder['mbtn_right_down'] =
         --function () mp.command('seek -60') end
-        function () mp.commandv('seek', -60, 'relative', 'keyframes') end
+        --function () mp.commandv('seek', -60, 'relative', 'keyframes') end
 
     --skipfrwd
     ne = new_element('skipfrwd', 'button')
 
     ne.softrepeat = true
     ne.content = '\xEF\x8E\x9F'
+    ne.enabled = (have_ch) -- disables button when no chapters available.
     ne.eventresponder['mbtn_left_down'] =
         --function () mp.command('seek +5') end
-        function () mp.commandv('seek', 5, 'relative', 'keyframes') end
-    ne.eventresponder['shift+mbtn_left_down'] =
-        function () mp.commandv('frame-step') end
-    ne.eventresponder['mbtn_right_down'] =
+        --function () mp.commandv('seek', 5, 'relative', 'keyframes') end
+        function () mp.commandv("add", "chapter", 1) end
+    --ne.eventresponder['shift+mbtn_left_down'] =
+        --function () mp.commandv('frame-step') end
+    --ne.eventresponder['mbtn_right_down'] =
         --function () mp.command('seek +60') end
-        function () mp.commandv('seek', 60, 'relative', 'keyframes') end
+        --function () mp.commandv('seek', 60, 'relative', 'keyframes') end
 
     --
     update_tracklist()
@@ -1231,12 +1238,12 @@ function osc_init()
 		local msg = texts.off
         if not (get_track('audio') == 0) then
             msg = (texts.audio .. ' [' .. get_track('audio') .. ' ∕ ' .. #tracks_osc.audio .. '] ')
-            local prop = mp.get_property('current-tracks/audio/lang')
+            local prop = mp.get_property('current-tracks/audio/title') --('current-tracks/audio/lang')
             if not prop then
 				prop = texts.na
 			end
 			msg = msg .. '[' .. prop .. ']'
-			prop = mp.get_property('current-tracks/audio/title')
+			prop = mp.get_property('current-tracks/audio/lang') --('current-tracks/audio/title')
 			if prop then
 				msg = msg .. ' ' .. prop
 			end
@@ -1308,7 +1315,7 @@ function osc_init()
         if state.paused then
 			title = title:gsub('\\n', ' '):gsub('\\$', ''):gsub('{','\\{')
 		else
-			title = ' '
+			title = title:gsub('\\n', ' '):gsub('\\$', ''):gsub('{','\\{') --title = ' '
 		end
         return not (title == '') and title or ' '
     end
@@ -1796,7 +1803,7 @@ function process_event(source, what)
 end
 
 function show_logo()
-	local osd_w, osd_h = 640, 360
+	local osd_w, osd_h = 1280, 720 -- 640, 360
 	local logo_x, logo_y = osd_w/2, osd_h/2-20
 	local ass = assdraw.ass_new()
 	ass:new_event()
