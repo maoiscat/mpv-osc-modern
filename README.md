@@ -1,7 +1,8 @@
-# mpv-osc-morden
-Yet another mpv osc script, based on mpv built-in osc
+# mpv-osc-morden x
+Yet another mpv osc script, based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc-morden/), which is in turn mpv built-in osc.
+Mostly minor changes including repurposing the skip_back/forward buttons to go to the previous/next chapter and fixing the play/pause button.
 
-![img](https://github.com/maoiscat/mpv-osc-morden/blob/main/preview.png)
+![img](https://github.com/cyl0/mpv-osc-morden-x/blob/main/preview.png)
 
 # How to install
 
@@ -15,14 +16,6 @@ osc=no
 
 It needs [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) to work. just put the ttf in "\~\~/fonts" folder.
 
-besides i suggest a white backgound when idling
-
-```
-[idle]
-profile-cond=p["idle-active"]
-profile-restore=copy-equal
-background=1
-```
 # How to config
 
 edit osc.conf in "\~\~/script-opts/" folder, however many options are changed, so refer to the user_opts variable in the script file for details.
@@ -35,8 +28,7 @@ like the built-in script, some buttons may accept multiple mouse actions, here i
 * mbtn_left: seek to chosen position.
 * mbtn_right: seek to the head of chosen chapter
 ## skip_back/forward
-* mbtn_left: skip 5 seconds.
-* mbtn_right: skip 60 seconds.
+* mbtn_left: go to previous/next chapter.
 ## playlist_back/forwad
 * mbtn_left: play previous/netx file.
 * mbtn_right: show playlist.
