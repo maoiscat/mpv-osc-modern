@@ -32,7 +32,7 @@ like the built-in script, some buttons may accept multiple mouse actions, here i
 * mbtn_left: go to previous/next chapter.
 * mbtn_right: show chapter list.
 ## playlist_back/forwad
-* mbtn_left: play previous/netx file.
+* mbtn_left: play previous/next file.
 * mbtn_right: show playlist.
 ## cycle_audio/subtitle
 * mbtn_left/right: cycle to next/previous track.
