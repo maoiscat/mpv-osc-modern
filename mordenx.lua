@@ -1,4 +1,4 @@
--- original by maoiscat
+-- mpv-osc-morden by maoiscat
 -- email:valarmor@163.com
 -- https://github.com/maoiscat/mpv-osc-morden
 
@@ -1205,7 +1205,8 @@ function osc_init()
         function () mp.commandv("add", "chapter", -1) end
     --ne.eventresponder['shift+mbtn_left_down'] =
         --function () mp.commandv('frame-back-step') end
-    --ne.eventresponder['mbtn_right_down'] =
+    ne.eventresponder['mbtn_right_down'] =
+        function () show_message(get_chapterlist()) end
         --function () mp.command('seek -60') end
         --function () mp.commandv('seek', -60, 'relative', 'keyframes') end
 
@@ -1221,7 +1222,8 @@ function osc_init()
         function () mp.commandv("add", "chapter", 1) end
     --ne.eventresponder['shift+mbtn_left_down'] =
         --function () mp.commandv('frame-step') end
-    --ne.eventresponder['mbtn_right_down'] =
+    ne.eventresponder['mbtn_right_down'] =
+        function () show_message(get_chapterlist()) end
         --function () mp.command('seek +60') end
         --function () mp.commandv('seek', 60, 'relative', 'keyframes') end
 
