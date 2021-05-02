@@ -6,7 +6,7 @@ Mostly minor changes including repurposing the skip_back/forward buttons to go t
 
 # How to install
 
-put the .lua file into "\~\~/scripts/" folder, and remove other osc scripts.
+put mordenx.lua  into "\~\~/scripts/" folder, and remove other osc scripts.
 
 mpv.conf
 
@@ -30,6 +30,7 @@ like the built-in script, some buttons may accept multiple mouse actions, here i
 * mbtn_right: seek to the head of chosen chapter
 ## skip_back/forward
 * mbtn_left: go to previous/next chapter.
+* mbtn_right: show chapter list.
 ## playlist_back/forwad
 * mbtn_left: play previous/netx file.
 * mbtn_right: show playlist.
