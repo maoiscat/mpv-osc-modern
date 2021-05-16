@@ -5,7 +5,7 @@ An MPV OSC script, based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc
 
 # How to install
 
-Locate your MPV folder. It is typically located at `%APPDATA%\mpv\scripts\mpv_thumbnail_script_server.lua` on Windows and `~/.config/mpv/scripts/mpv_thumbnail_script_server.lua` on Linux/MacOS. See the [Files section](https://mpv.io/manual/master/#files) in mpv's manual for more info.
+Locate your MPV folder. It is typically located at `%APPDATA%\mpv\` on Windows and `~/.config/mpv/scripts/` on Linux/MacOS. See the [Files section](https://mpv.io/manual/master/#files) in mpv's manual for more info.
 
 Put mordenx.lua into your mpv "\~\~/scripts/" folder, and remove other osc scripts,
 then put the `Material-Design-Iconic-Font.ttf` from [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) in the "\~\~/fonts" folder.
