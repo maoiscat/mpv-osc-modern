@@ -1805,7 +1805,7 @@ function process_event(source, what)
 end
 
 function show_logo()
-	local osd_w, osd_h = 1280, 720 -- 640, 360
+	local osd_w, osd_h = 640, 360
 	local logo_x, logo_y = osd_w/2, osd_h/2-20
 	local ass = assdraw.ass_new()
 	ass:new_event()
