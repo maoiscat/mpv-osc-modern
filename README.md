@@ -1,4 +1,4 @@
-# mpv-osc-morden x
+# mpv-osc-morden-x
 An MPV OSC script, based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc-morden/), with some minor changes including making the skip_back/forward buttons go to the previous/next chapter like in MPV's default OSC and fixing the play/pause button.
 
 ![img](https://github.com/cyl0/mpv-osc-morden-x/blob/main/preview.png)
@@ -8,7 +8,7 @@ An MPV OSC script, based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc
 Locate your MPV folder. It is typically located at `\%APPDATA%\mpv\` on Windows and `~/.config/mpv/` on Linux/MacOS. See the [Files section](https://mpv.io/manual/master/#files) in mpv's manual for more info.
 
 Put mordenx.lua into your mpv "\~\~/scripts/" folder, and remove other osc scripts,
-then put the `Material-Design-Iconic-Font.ttf` from [Material-Design-Iconic-Font](https://zavoloklom.github.io/material-design-iconic-font/) in the "\~\~/fonts" folder.
+then put `Material-Design-Iconic-Font.ttf` in the "\~\~/fonts" folder.
 
 in mpv.conf:
 
@@ -16,7 +16,7 @@ in mpv.conf:
 osc = no
 border = no # Optional, but recommended
 ```
-
+`Material-Design-Iconic-Font.ttf` can also be downloaded from [here](https://zavoloklom.github.io/material-design-iconic-font/).
 
 # How to config
 
