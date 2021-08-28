@@ -3,7 +3,7 @@
 -- https://github.com/maoiscat/mpv-osc-morden
 
 -- fork by cyl0
--- https://github.com/cyl0/mpv-osc-morden
+-- https://github.com/cyl0/mpv-osc-morden-x
 
 local assdraw = require 'mp.assdraw'
 local msg = require 'mp.msg'
@@ -18,10 +18,10 @@ local utils = require 'mp.utils'
 local user_opts = {
     showwindowed = true,        -- show OSC when windowed?
     showfullscreen = true,      -- show OSC when fullscreen?
-    scalewindowed = 1,          -- scaling of the controller when windowed
-    scalefullscreen = 1,        -- scaling of the controller when fullscreen
-    scaleforcedwindow = 2,      -- scaling when rendered on a forced window
-    vidscale = true,           -- scale the controller with the video?
+    scalewindowed = 1.0,        -- scaling of the controller when windowed
+    scalefullscreen = 1.0,      -- scaling of the controller when fullscreen
+    scaleforcedwindow = 2.0,    -- scaling when rendered on a forced window
+    vidscale = true,            -- scale the controller with the video?
     hidetimeout = 1500,         -- duration in ms until the OSC hides if no
                                 -- mouse movement. enforced non-negative for the
                                 -- user, but internally negative is 'always-on'.
@@ -31,18 +31,18 @@ local user_opts = {
     iamaprogrammer = false,     -- use native mpv values and disable OSC
                                 -- internal track list management (and some
                                 -- functions that depend on it)
-	font = 'mpv-osd-symbols',	-- default osc font
+    font = 'mpv-osd-symbols',	-- default osc font
     seekbarhandlesize = 1.0,	-- size ratio of the slider handle, range 0 ~ 1
-    seekrange = true,			-- show seekrange overlay
+    seekrange = true,		-- show seekrange overlay
     seekrangealpha = 64,      	-- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
     title = '${media-title}',   -- string compatible with property-expansion
                                 -- to be shown as OSC title
-	showtitle = true,			-- show title and no hide timeout on pause
+    showtitle = true,		-- show title and no hide timeout on pause
     timetotal = true,          	-- display total time instead of remaining time?
     visibility = 'auto',        -- only used at init to set visibility_mode(...)
     windowcontrols = 'auto',    -- whether to show window controls
-    language = 'eng',			-- eng=English, chs=Chinese
+    language = 'eng',		-- eng=English, chs=Chinese
 }
 
 -- Localization
@@ -91,15 +91,15 @@ local osc_param = { -- calculated by osc_init()
 }
 
 local osc_styles = {
-	TransBg = '{\\blur100\\bord140\\1c&H000000&\\3c&H000000&}',
-	SeekbarBg = '{\\blur0\\bord0\\1c&HFFFFFF&}',
-	SeekbarFg = '{\\blur1\\bord1\\1c&HE39C42&}',
+    TransBg = '{\\blur100\\bord150\\1c&H000000&\\3c&H000000&}',
+    SeekbarBg = '{\\blur0\\bord0\\1c&HFFFFFF&}',
+    SeekbarFg = '{\\blur1\\bord1\\1c&HE39C42&}',
     Ctrl1 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs36\\fnmaterial-design-iconic-font}',
     Ctrl2 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font}',
     Ctrl3 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font}',
     Time = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&H000000&\\fs17\\fn' .. user_opts.font .. '}',
     Tooltip = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H000000&\\fs18\\fn' .. user_opts.font .. '}',
-	Title = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H0\\fs48\\q2\\fn' .. user_opts.font .. '}',
+    Title = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H0\\fs38\\q2\\fn' .. user_opts.font .. '}',
     WinCtrl = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H0\\fs20\\fnmpv-osd-symbols}',
     elementDown = '{\\1c&H999999&}',
 }
@@ -1236,7 +1236,7 @@ function osc_init()
     --
     update_tracklist()
     
-	--cy_audio
+    --cy_audio
     ne = new_element('cy_audio', 'button')
     ne.enabled = (#tracks_osc.audio > 0)
     ne.visible = (osc_param.playresx >= 540)
