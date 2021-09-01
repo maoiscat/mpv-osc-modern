@@ -26,15 +26,19 @@ edit osc.conf in "\~\~/script-opts/" folder, however many options are changed, s
 
 like the built-in script, some buttons may accept multiple mouse actions, here is a list:
 
-## seekbar
-* mbtn_left: seek to chosen position.
-* mbtn_right: seek to the head of chosen chapter
-## skip_back/forward
-* mbtn_left: go to previous/next chapter.
-* mbtn_right: show chapter list.
-## playlist_back/forwad
-* mbtn_left: play previous/next file.
-* mbtn_right: show playlist.
-## cycle_audio/subtitle
-* mbtn_left/right: cycle to next/previous track.
-* mbtn_mid: show track list.
+## Seekbar
+* Left mouse button: seek to chosen position.
+* Right mouse button: seek to the head of chosen chapter
+## Skip back/forward buttons
+* Left mouse button: go to previous/next chapter.
+* Right mouse button: show chapter list.
+## Playlist back/forwad buttons
+* Left mouse button: play previous/next file.
+* Right mouse button: show playlist.
+## Cycle audio/subtitle buttons
+* Left mouse button/Right mouse button: cycle to next/previous track.
+* Middle mouse button: show track list.
+## Playback time
+* Left mouse button: display time in milliseconds
+## Duration
+* Left mouse button: display total time instead of remaining time
