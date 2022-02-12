@@ -2066,17 +2066,21 @@ do_enable_keybindings()
 
 --mouse input bindings
 mp.set_key_bindings({
-    {'mbtn_left',           function(e) process_event('mbtn_left', 'up') end,
-                            function(e) process_event('mbtn_left', 'down')  end},
-    {'mbtn_right',          function(e) process_event('mbtn_right', 'up') end,
-                            function(e) process_event('mbtn_right', 'down')  end},
-    {'mbtn_mid',            function(e) process_event('mbtn_mid', 'up') end,
-                            function(e) process_event('mbtn_mid', 'down')  end},
-    {'wheel_up',            function(e) process_event('wheel_up', 'press') end},
-    {'wheel_down',          function(e) process_event('wheel_down', 'press') end},
-    {'mbtn_left_dbl',       'ignore'},
-    {'mbtn_right_dbl',      'ignore'},
-}, 'input', 'force')
+    {"mbtn_left",           function(e) process_event("mbtn_left", "up") end,
+                            function(e) process_event("mbtn_left", "down")  end},
+    {"shift+mbtn_left",     function(e) process_event("shift+mbtn_left", "up") end,
+                            function(e) process_event("shift+mbtn_left", "down")  end},
+    {"mbtn_right",          function(e) process_event("mbtn_right", "up") end,
+                            function(e) process_event("mbtn_right", "down")  end},
+    -- alias to shift_mbtn_left for single-handed mouse use
+    {"mbtn_mid",            function(e) process_event("shift+mbtn_left", "up") end,
+                            function(e) process_event("shift+mbtn_left", "down")  end},
+    {"wheel_up",            function(e) process_event("wheel_up", "press") end},
+    {"wheel_down",          function(e) process_event("wheel_down", "press") end},
+    {"mbtn_left_dbl",       "ignore"},
+    {"shift+mbtn_left_dbl", "ignore"},
+    {"mbtn_right_dbl",      "ignore"},
+}, "input", "force")
 mp.enable_key_bindings('input')
 
 mp.set_key_bindings({
