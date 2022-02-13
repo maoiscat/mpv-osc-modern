@@ -39,8 +39,8 @@ local user_opts = {
     showjump = true,            -- show "jump forward/backward 5 seconds" buttons 
                                 -- shift+left-click to step 1 frame and 
                                 -- right-click to jump 1 minute
-    jumpamount = 5,             -- change the jump amount in seconds. icon can
-                                -- show 5, 10, 30, but any number is valid
+    jumpamount = 5,             -- change the jump amount (in seconds by default)
+    jumpiconnumber = true,      -- show different icon when jumpamount is 5, 10, or 30
     jumpmode = 'exact',         -- seek mode for jump buttons. e.g.
                                 -- 'exact', 'relative+keyframes', etc.
     title = '${media-title}',   -- string compatible with property-expansion
@@ -1118,7 +1118,7 @@ layouts = function ()
 
         -- HACK: jumpfrwd's icon must be mirrored for nonstandard # of seconds
         -- as the font only has an icon without a number for rewinding
-        lo.style = (jumpicons[user_opts.jumpamount] ~= nil) and osc_styles.Ctrl2 or osc_styles.Ctrl2Flip
+        lo.style = (user_opts.jumpiconnumber and jumpicons[user_opts.jumpamount] ~= nil) and osc_styles.Ctrl2 or osc_styles.Ctrl2Flip
     end
 
     lo = add_layout('skipfrwd')
@@ -1270,7 +1270,10 @@ function osc_init()
     if user_opts.showjump then
         local jumpamount = user_opts.jumpamount
         local jumpmode = user_opts.jumpmode
-        local icons = jumpicons[jumpamount] or jumpicons.default
+        local icons = jumpicons.default
+        if user_opts.jumpiconnumber then
+            icons = jumpicons[jumpamount] or jumpicons.default
+        end
 
         --jumpback
         ne = new_element('jumpback', 'button')
