@@ -45,6 +45,8 @@ local user_opts = {
     visibility = 'auto',        -- only used at init to set visibility_mode(...)
     windowcontrols = 'auto',    -- whether to show window controls
     language = 'eng',		-- eng=English, chs=Chinese
+
+    keyboardnavigation = false, -- enable directional keyboard navigation
 }
 
 -- Localization
@@ -104,7 +106,7 @@ local osc_styles = {
     Title = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H0\\fs38\\q2\\fn' .. user_opts.font .. '}',
     WinCtrl = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H0\\fs20\\fnmpv-osd-symbols}',
     elementDown = '{\\1c&H999999&}',
-    elementHighlight = '{\\1c&H000000&}',
+    elementHighlight = '{\\blur1\\bord1\\1c&HFFC033&}',
 }
 
 local keyboard_controls = {
@@ -598,10 +600,6 @@ function render_elements(master_ass)
         
         end
 
-        if state.highlight_element == element.name then
-            style_ass:append(osc_styles.elementHighlight)
-        end
-
         if element.eventresponder and (state.active_element == n) then
             -- run render event functions
             if not (element.eventresponder.render == nil) then
@@ -621,6 +619,10 @@ function render_elements(master_ass)
             end
         end
 
+        if state.highlight_element == element.name then
+            style_ass:append(osc_styles.elementHighlight)
+        end
+        
         local elem_ass = assdraw.ass_new()
         elem_ass:merge(style_ass)
         
@@ -1555,7 +1557,10 @@ function show_osc()
     state.showtime = mp.get_time()
 
     osc_visible(true)
-    osc_enable_key_bindings()
+    
+    if user_opts.keyboardnavigation == true then
+        osc_enable_key_bindings()
+    end
 
     if (user_opts.fadeduration > 0) then
         state.anitype = nil
@@ -1569,7 +1574,9 @@ function hide_osc()
         -- no-op and won't render again to remove the osc, so do that manually.
         state.osc_visible = false
         render_wipe()
-        osc_disable_key_bindings()
+        if user_opts.keyboardnavigation == true then
+            osc_disable_key_bindings()
+        end
     elseif (user_opts.fadeduration > 0) then
         if not(state.osc_visible == false) then
             state.anitype = 'out'
@@ -2219,6 +2226,11 @@ function osc_kb_control_left()
             end
         end
 
+        if active_control_name == 'seekbar' then
+            mp.commandv('seek', -5, 'exact', 'keyframes')
+            return
+        end
+
         if active_control_name then
             if active_control_index - 1 < 0 then
                 return
@@ -2248,6 +2260,11 @@ function osc_kb_control_right()
             end
         end
 
+        if active_control_name == 'seekbar' then
+            mp.commandv('seek', 5, 'exact', 'keyframes')
+            return
+        end
+
         if active_control_name then
             if active_control_index + 1 > #controls then
                 return
@@ -2262,12 +2279,10 @@ function osc_kb_control_right()
 end
 
 function osc_kb_control_back()
-    print('BACK')
     visibility_mode('auto', true)
 end
 
 function osc_kb_control_enter()
-    print('ENTER')
     visibility_mode('always', true)
     for n = 1, #elements do
         if elements[n].name == state.highlight_element then
@@ -2293,6 +2308,7 @@ function osc_add_key_binding(key, name, fn, flags)
 	mp.add_forced_key_binding(key, name, fn, flags)
 end
 
+-- This is based on code from https://github.com/darsain/uosc
 function osc_enable_key_bindings()
 	osc_key_bindings = {}
 	-- The `mp.set_key_bindings()` method would be easier here, but that
@@ -2301,18 +2317,8 @@ function osc_enable_key_bindings()
 	osc_add_key_binding('down',            'osc-kb-control-next1',        osc_kb_control_down, 'repeatable')
 	osc_add_key_binding('left',            'osc-kb-control-left1',        osc_kb_control_left, 'repeatable')
 	osc_add_key_binding('right',           'osc-kb-control-right1',      osc_kb_control_right, 'repeatable')
-	-- osc_add_key_binding('shift+right',     'osc-kb-control-select-soft1', self:create_action('open_selected_item_soft'))
-	-- osc_add_key_binding('shift+mbtn_left', 'osc-kb-control-select-soft',  self:create_action('open_selected_item_soft'))
-
-	-- osc_add_key_binding('mbtn_back',  'osc-kb-control-back-alt3',   self:create_action('back'))
-	-- osc_add_key_binding('bs',         'osc-kb-control-back-alt4',   self:create_action('back'))
 	osc_add_key_binding('enter',      'osc-kb-control-select-alt3', osc_kb_control_enter, 'repeatable')
-	-- osc_add_key_binding('kp_enter',   'osc-kb-control-select-alt4', self:create_action('open_selected_item'))
 	osc_add_key_binding('esc',        'osc-kb-control-close',       osc_kb_control_back, 'repeatable')
-	-- osc_add_key_binding('pgup',       'osc-kb-control-page-up',     self:create_action('on_pgup'))
-	-- osc_add_key_binding('pgdwn',      'osc-kb-control-page-down',   self:create_action('on_pgdwn'))
-	-- osc_add_key_binding('home',       'osc-kb-control-home',        self:create_action('on_home'))
-	-- osc_add_key_binding('end',        'osc-kb-control-end',         self:create_action('on_end'))
 end
 
 function osc_disable_key_bindings()
