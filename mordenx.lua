@@ -39,6 +39,10 @@ local user_opts = {
     showjump = true,            -- show "jump forward/backward 5 seconds" buttons 
                                 -- shift+left-click to step 1 frame and 
                                 -- right-click to jump 1 minute
+    jumpamount = 5,             -- change the jump amount in seconds. icon can
+                                -- show 5, 10, 30, but any number is valid
+    jumpmode = 'exact',         -- seek mode for jump buttons. e.g.
+                                -- 'exact', 'relative+keyframes', etc.
     title = '${media-title}',   -- string compatible with property-expansion
                                 -- to be shown as OSC title
     showtitle = true,		-- show title in OSC
@@ -50,6 +54,14 @@ local user_opts = {
     language = 'eng',		-- eng=English, chs=Chinese
     chapter_fmt = "Chapter: %s", -- chapter print format for seekbar-hover. "no" to disable
 }
+
+-- Icons for jump button depending on jumpamount 
+local jumpicons = { 
+    [5] = {'\xEF\x8E\xB1', '\xEF\x8E\xA3'}, 
+    [10] = {'\xEF\x8E\xAF', '\xEF\x8E\xA1'}, 
+    [30] = {'\xEF\x8E\xB0', '\xEF\x8E\xA2'}, 
+    default = {'\xEF\x8E\xB2', '\xEF\x8E\xB2'}, -- second icon is mirrored in layout() 
+} 
 
 -- Localization
 local language = {
@@ -102,6 +114,7 @@ local osc_styles = {
     SeekbarFg = '{\\blur1\\bord1\\1c&HE39C42&}',
     Ctrl1 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs36\\fnmaterial-design-iconic-font}',
     Ctrl2 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font}',
+    Ctrl2Flip = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font\\fry180',
     Ctrl3 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font}',
     Time = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&H000000&\\fs17\\fn' .. user_opts.font .. '}',
     Tooltip = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H000000&\\fs18\\fn' .. user_opts.font .. '}',
@@ -1102,7 +1115,10 @@ layouts = function ()
     if showjump then
         lo = add_layout('jumpfrwd')
         lo.geometry = {x = refX + 60, y = refY - 40 , an = 5, w = 30, h = 24}
-        lo.style = osc_styles.Ctrl2	
+
+        -- HACK: jumpfrwd's icon must be mirrored for nonstandard # of seconds
+        -- as the font only has an icon without a number for rewinding
+        lo.style = (jumpicons[user_opts.jumpamount] ~= nil) and osc_styles.Ctrl2 or osc_styles.Ctrl2Flip
     end
 
     lo = add_layout('skipfrwd')
@@ -1252,34 +1268,38 @@ function osc_init()
     --    function () mp.commandv('script-binding', 'open-file-dialog') end
 
     if user_opts.showjump then
+        local jumpamount = user_opts.jumpamount
+        local jumpmode = user_opts.jumpmode
+        local icons = jumpicons[jumpamount] or jumpicons.default
+
         --jumpback
         ne = new_element('jumpback', 'button')
 
         ne.softrepeat = true
-        ne.content = '\xEF\x8E\xB1'
+        ne.content = icons[1]
         ne.eventresponder['mbtn_left_down'] =
             --function () mp.command('seek -5') end
-            function () mp.commandv('seek', -5, 'relative', 'keyframes') end
+            function () mp.commandv('seek', -jumpamount, jumpmode) end
         ne.eventresponder['shift+mbtn_left_down'] =
             function () mp.commandv('frame-back-step') end
         ne.eventresponder['mbtn_right_down'] =
             --function () mp.command('seek -60') end
-            function () mp.commandv('seek', -60, 'relative', 'keyframes') end
+            function () mp.commandv('seek', -60, jumpmode) end
 
 
         --jumpfrwd
         ne = new_element('jumpfrwd', 'button')
 
         ne.softrepeat = true
-        ne.content = '\xEF\x8E\xA3'
+        ne.content = icons[2]
         ne.eventresponder['mbtn_left_down'] =
             --function () mp.command('seek +5') end
-            function () mp.commandv('seek', 5, 'relative', 'keyframes') end
+            function () mp.commandv('seek', jumpamount, jumpmode) end
         ne.eventresponder['shift+mbtn_left_down'] =
             function () mp.commandv('frame-step') end
         ne.eventresponder['mbtn_right_down'] =
             --function () mp.command('seek +60') end
-            function () mp.commandv('seek', 60, 'relative', 'keyframes') end
+            function () mp.commandv('seek', 60, jumpmode) end
     end
     
 
