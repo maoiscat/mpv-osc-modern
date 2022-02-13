@@ -36,6 +36,9 @@ local user_opts = {
     seekrange = true,		-- show seekrange overlay
     seekrangealpha = 64,      	-- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
+    showjump = true,            -- show "jump forward/backward 5 seconds" buttons 
+                                -- shift+left-click to step 1 frame and 
+                                -- right-click to jump 1 minute
     title = '${media-title}',   -- string compatible with property-expansion
                                 -- to be shown as OSC title
     showtitle = true,		-- show title in OSC
@@ -1072,37 +1075,42 @@ layouts = function ()
     lo.slider.gap = 7
     lo.slider.tooltip_style = osc_styles.Tooltip
     lo.slider.tooltip_an = 2
+
+    local showjump = user_opts.showjump
+    local offset = showjump and 60 or 0
     
 	-- buttons
     lo = add_layout('pl_prev')
-    lo.geometry = {x = refX - 180, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX - 120 - offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2
 
 	lo = add_layout('skipback')
-    lo.geometry = {x = refX - 120, y = refY - 40 , an = 5, w = 30, h = 24}
-    lo.style = osc_styles.Ctrl2
-
-    lo = add_layout('jumpback')
-    lo.geometry = {x = refX - 60, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX - 60 - offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2
 
 
+    if showjump then
+        lo = add_layout('jumpback')
+        lo.geometry = {x = refX - 60, y = refY - 40 , an = 5, w = 30, h = 24}
+        lo.style = osc_styles.Ctrl2
+    end
 			
     lo = add_layout('playpause')
     lo.geometry = {x = refX, y = refY - 40 , an = 5, w = 45, h = 45}
     lo.style = osc_styles.Ctrl1	
 
-
-    lo = add_layout('jumpfrwd')
-    lo.geometry = {x = refX + 60, y = refY - 40 , an = 5, w = 30, h = 24}
-    lo.style = osc_styles.Ctrl2	
+    if showjump then
+        lo = add_layout('jumpfrwd')
+        lo.geometry = {x = refX + 60, y = refY - 40 , an = 5, w = 30, h = 24}
+        lo.style = osc_styles.Ctrl2	
+    end
 
     lo = add_layout('skipfrwd')
-    lo.geometry = {x = refX + 120, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX + 60 + offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2	
 
     lo = add_layout('pl_next')
-    lo.geometry = {x = refX + 180, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX + 120 + offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2
 
 
@@ -1243,34 +1251,36 @@ function osc_init()
     --ne.eventresponder['mbtn_right_up'] =
     --    function () mp.commandv('script-binding', 'open-file-dialog') end
 
-    --jumpback
-    ne = new_element('jumpback', 'button')
+    if user_opts.showjump then
+        --jumpback
+        ne = new_element('jumpback', 'button')
 
-    ne.softrepeat = true
-    ne.content = '\xEF\x8E\xB1'
-    ne.eventresponder['mbtn_left_down'] =
-        --function () mp.command('seek -5') end
-        function () mp.commandv('seek', -5, 'relative', 'keyframes') end
-    ne.eventresponder['shift+mbtn_left_down'] =
-        function () mp.commandv('frame-back-step') end
-    ne.eventresponder['mbtn_right_down'] =
-        --function () mp.command('seek -60') end
-        function () mp.commandv('seek', -60, 'relative', 'keyframes') end
+        ne.softrepeat = true
+        ne.content = '\xEF\x8E\xB1'
+        ne.eventresponder['mbtn_left_down'] =
+            --function () mp.command('seek -5') end
+            function () mp.commandv('seek', -5, 'relative', 'keyframes') end
+        ne.eventresponder['shift+mbtn_left_down'] =
+            function () mp.commandv('frame-back-step') end
+        ne.eventresponder['mbtn_right_down'] =
+            --function () mp.command('seek -60') end
+            function () mp.commandv('seek', -60, 'relative', 'keyframes') end
 
 
-    --jumpfrwd
-    ne = new_element('jumpfrwd', 'button')
+        --jumpfrwd
+        ne = new_element('jumpfrwd', 'button')
 
-    ne.softrepeat = true
-    ne.content = '\xEF\x8E\xA3'
-    ne.eventresponder['mbtn_left_down'] =
-        --function () mp.command('seek +5') end
-        function () mp.commandv('seek', 5, 'relative', 'keyframes') end
-    ne.eventresponder['shift+mbtn_left_down'] =
-        function () mp.commandv('frame-step') end
-    ne.eventresponder['mbtn_right_down'] =
-        --function () mp.command('seek +60') end
-        function () mp.commandv('seek', 60, 'relative', 'keyframes') end
+        ne.softrepeat = true
+        ne.content = '\xEF\x8E\xA3'
+        ne.eventresponder['mbtn_left_down'] =
+            --function () mp.command('seek +5') end
+            function () mp.commandv('seek', 5, 'relative', 'keyframes') end
+        ne.eventresponder['shift+mbtn_left_down'] =
+            function () mp.commandv('frame-step') end
+        ne.eventresponder['mbtn_right_down'] =
+            --function () mp.command('seek +60') end
+            function () mp.commandv('seek', 60, 'relative', 'keyframes') end
+    end
     
 
     --skipback
