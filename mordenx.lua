@@ -562,6 +562,11 @@ function prepare_elements()
             element.layout.alpha[1] = 136
             element.eventresponder = nil
         end
+        -- gray out the element if it is toggled off
+        if (element.off) then
+            element.layout.alpha[1] = 136
+        end
+
     end
 end
 
@@ -1346,6 +1351,7 @@ function osc_init()
     --cy_audio
     ne = new_element('cy_audio', 'button')
     ne.enabled = (#tracks_osc.audio > 0)
+    ne.off = (get_track('audio') == 0)
     ne.visible = (osc_param.playresx >= 540)
     ne.content = '\xEF\x8E\xB7'
     ne.tooltip_style = osc_styles.Tooltip
@@ -1376,6 +1382,7 @@ function osc_init()
     --cy_sub
     ne = new_element('cy_sub', 'button')
     ne.enabled = (#tracks_osc.sub > 0)
+    ne.off = (get_track('sub') == 0)
     ne.visible = (osc_param.playresx >= 600)
     ne.content = '\xEF\x8F\x93'
     ne.tooltip_style = osc_styles.Tooltip
