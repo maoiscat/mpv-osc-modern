@@ -1,7 +1,7 @@
-# mpv-osc-morden-x
-An MPV OSC script, based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc-morden/), with some minor changes including making the skip_back/forward buttons go to the previous/next chapter like in MPV's default OSC and fixing the play/pause button.
+# MordenX
+An MPV OSC script based on [mpv-osc-morden](https://github.com/maoiscat/mpv-osc-morden/) that aims to mirror the functionality of MPV's stock OSC while with a more modern-looking interface.
 
-![img](https://github.com/cyl0/mpv-osc-morden-x/blob/main/preview.png)
+![img](https://github.com/cyl0/MordenX/blob/main/preview.png)
 
 # How to install
 
@@ -29,12 +29,16 @@ like the built-in script, some buttons may accept multiple mouse actions, here i
 ## Seekbar
 * Left mouse button: seek to chosen position.
 * Right mouse button: seek to the head of chosen chapter
-## Skip back/forward buttons
-* Left mouse button: go to previous/next chapter.
-* Right mouse button: show chapter list.
 ## Playlist back/forwad buttons
 * Left mouse button: play previous/next file.
 * Right mouse button: show playlist.
+## Skip back/forward buttons
+* Left mouse button: go to previous/next chapter.
+* Right mouse button: show chapter list.
+## Jump back/forward buttons
+* Left mouse button: Jumps forwards/backwards by 5 seconds, or by the amount set in `user_opts`.
+* Right mouse button: Jumps forwards/backwards by 1 minute.
+* Shift + Left mouse button: Skips to the previous/next frame.
 ## Cycle audio/subtitle buttons
 * Left mouse button/Right mouse button: cycle to next/previous track.
 * Middle mouse button: show track list.
