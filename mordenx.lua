@@ -36,6 +36,13 @@ local user_opts = {
     seekrange = true,		-- show seekrange overlay
     seekrangealpha = 64,      	-- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
+    showjump = true,            -- show "jump forward/backward 5 seconds" buttons 
+                                -- shift+left-click to step 1 frame and 
+                                -- right-click to jump 1 minute
+    jumpamount = 5,             -- change the jump amount (in seconds by default)
+    jumpiconnumber = true,      -- show different icon when jumpamount is 5, 10, or 30
+    jumpmode = 'exact',         -- seek mode for jump buttons. e.g.
+                                -- 'exact', 'relative+keyframes', etc.
     title = '${media-title}',   -- string compatible with property-expansion
                                 -- to be shown as OSC title
     showtitle = true,		-- show title in OSC
@@ -47,6 +54,14 @@ local user_opts = {
     language = 'eng',		-- eng=English, chs=Chinese
     chapter_fmt = "Chapter: %s", -- chapter print format for seekbar-hover. "no" to disable
 }
+
+-- Icons for jump button depending on jumpamount 
+local jumpicons = { 
+    [5] = {'\xEF\x8E\xB1', '\xEF\x8E\xA3'}, 
+    [10] = {'\xEF\x8E\xAF', '\xEF\x8E\xA1'}, 
+    [30] = {'\xEF\x8E\xB0', '\xEF\x8E\xA2'}, 
+    default = {'\xEF\x8E\xB2', '\xEF\x8E\xB2'}, -- second icon is mirrored in layout() 
+} 
 
 -- Localization
 local language = {
@@ -99,6 +114,7 @@ local osc_styles = {
     SeekbarFg = '{\\blur1\\bord1\\1c&HE39C42&}',
     Ctrl1 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs36\\fnmaterial-design-iconic-font}',
     Ctrl2 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font}',
+    Ctrl2Flip = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font\\fry180',
     Ctrl3 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font}',
     Time = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&H000000&\\fs17\\fn' .. user_opts.font .. '}',
     Tooltip = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H000000&\\fs18\\fn' .. user_opts.font .. '}',
@@ -1072,27 +1088,45 @@ layouts = function ()
     lo.slider.gap = 7
     lo.slider.tooltip_style = osc_styles.Tooltip
     lo.slider.tooltip_an = 2
+
+    local showjump = user_opts.showjump
+    local offset = showjump and 60 or 0
     
 	-- buttons
     lo = add_layout('pl_prev')
-    lo.geometry = {x = refX - 120, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX - 120 - offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2
 
 	lo = add_layout('skipback')
-    lo.geometry = {x = refX - 60, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX - 60 - offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2
 
+
+    if showjump then
+        lo = add_layout('jumpback')
+        lo.geometry = {x = refX - 60, y = refY - 40 , an = 5, w = 30, h = 24}
+        lo.style = osc_styles.Ctrl2
+    end
 			
     lo = add_layout('playpause')
     lo.geometry = {x = refX, y = refY - 40 , an = 5, w = 45, h = 45}
     lo.style = osc_styles.Ctrl1	
 
+    if showjump then
+        lo = add_layout('jumpfrwd')
+        lo.geometry = {x = refX + 60, y = refY - 40 , an = 5, w = 30, h = 24}
+
+        -- HACK: jumpfrwd's icon must be mirrored for nonstandard # of seconds
+        -- as the font only has an icon without a number for rewinding
+        lo.style = (user_opts.jumpiconnumber and jumpicons[user_opts.jumpamount] ~= nil) and osc_styles.Ctrl2 or osc_styles.Ctrl2Flip
+    end
+
     lo = add_layout('skipfrwd')
-    lo.geometry = {x = refX + 60, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX + 60 + offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2	
 
     lo = add_layout('pl_next')
-    lo.geometry = {x = refX + 120, y = refY - 40 , an = 5, w = 30, h = 24}
+    lo.geometry = {x = refX + 120 + offset, y = refY - 40 , an = 5, w = 30, h = 24}
     lo.style = osc_styles.Ctrl2
 
 
@@ -1232,6 +1266,45 @@ function osc_init()
         function () mp.commandv('cycle', 'pause') end
     --ne.eventresponder['mbtn_right_up'] =
     --    function () mp.commandv('script-binding', 'open-file-dialog') end
+
+    if user_opts.showjump then
+        local jumpamount = user_opts.jumpamount
+        local jumpmode = user_opts.jumpmode
+        local icons = jumpicons.default
+        if user_opts.jumpiconnumber then
+            icons = jumpicons[jumpamount] or jumpicons.default
+        end
+
+        --jumpback
+        ne = new_element('jumpback', 'button')
+
+        ne.softrepeat = true
+        ne.content = icons[1]
+        ne.eventresponder['mbtn_left_down'] =
+            --function () mp.command('seek -5') end
+            function () mp.commandv('seek', -jumpamount, jumpmode) end
+        ne.eventresponder['shift+mbtn_left_down'] =
+            function () mp.commandv('frame-back-step') end
+        ne.eventresponder['mbtn_right_down'] =
+            --function () mp.command('seek -60') end
+            function () mp.commandv('seek', -60, jumpmode) end
+
+
+        --jumpfrwd
+        ne = new_element('jumpfrwd', 'button')
+
+        ne.softrepeat = true
+        ne.content = icons[2]
+        ne.eventresponder['mbtn_left_down'] =
+            --function () mp.command('seek +5') end
+            function () mp.commandv('seek', jumpamount, jumpmode) end
+        ne.eventresponder['shift+mbtn_left_down'] =
+            function () mp.commandv('frame-step') end
+        ne.eventresponder['mbtn_right_down'] =
+            --function () mp.command('seek +60') end
+            function () mp.commandv('seek', 60, jumpmode) end
+    end
+    
 
     --skipback
     ne = new_element('skipback', 'button')
@@ -2066,17 +2139,21 @@ do_enable_keybindings()
 
 --mouse input bindings
 mp.set_key_bindings({
-    {'mbtn_left',           function(e) process_event('mbtn_left', 'up') end,
-                            function(e) process_event('mbtn_left', 'down')  end},
-    {'mbtn_right',          function(e) process_event('mbtn_right', 'up') end,
-                            function(e) process_event('mbtn_right', 'down')  end},
-    {'mbtn_mid',            function(e) process_event('mbtn_mid', 'up') end,
-                            function(e) process_event('mbtn_mid', 'down')  end},
-    {'wheel_up',            function(e) process_event('wheel_up', 'press') end},
-    {'wheel_down',          function(e) process_event('wheel_down', 'press') end},
-    {'mbtn_left_dbl',       'ignore'},
-    {'mbtn_right_dbl',      'ignore'},
-}, 'input', 'force')
+    {"mbtn_left",           function(e) process_event("mbtn_left", "up") end,
+                            function(e) process_event("mbtn_left", "down")  end},
+    {"shift+mbtn_left",     function(e) process_event("shift+mbtn_left", "up") end,
+                            function(e) process_event("shift+mbtn_left", "down")  end},
+    {"mbtn_right",          function(e) process_event("mbtn_right", "up") end,
+                            function(e) process_event("mbtn_right", "down")  end},
+    -- alias to shift_mbtn_left for single-handed mouse use
+    {"mbtn_mid",            function(e) process_event("shift+mbtn_left", "up") end,
+                            function(e) process_event("shift+mbtn_left", "down")  end},
+    {"wheel_up",            function(e) process_event("wheel_up", "press") end},
+    {"wheel_down",          function(e) process_event("wheel_down", "press") end},
+    {"mbtn_left_dbl",       "ignore"},
+    {"shift+mbtn_left_dbl", "ignore"},
+    {"mbtn_right_dbl",      "ignore"},
+}, "input", "force")
 mp.enable_key_bindings('input')
 
 mp.set_key_bindings({
