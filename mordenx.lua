@@ -125,35 +125,6 @@ local osc_styles = {
     elementHighlight = '{\\blur1\\bord1\\1c&HFFC033&}',
 }
 
-function build_keyboard_controls()
-    return {
-        [0] = {
-            'minimize',
-            'maximize',
-            'close'
-        },
-        [1] = {
-            'seekbar'
-        },
-        [2] = {
-            'cy_audio',
-            'cy_sub',
-            'pl_prev',
-            'skipback',
-            'jumpback',
-            'playpause',
-            'jumpfrwd',
-            'skipfrwd',
-            'pl_next',
-            'tog_info',
-            'tog_fs'
-        },
-    }
-end
-
-
-local keyboard_controls = build_keyboard_controls()
-
 -- internal states, do not touch
 local state = {
     showtime,                               -- time of last invocation (last mouse move)
@@ -200,6 +171,59 @@ if builtin_osc_enabled then
 end
 
 --
+
+
+-- WindowControl helpers
+function window_controls_enabled()
+    val = user_opts.windowcontrols
+    if val == 'auto' then
+        return (not state.border) or state.fullscreen
+    else
+        return val ~= 'no'
+    end
+end
+
+
+
+function build_keyboard_controls()
+
+    -- prepare the main button row
+    local bottom_button_line = {}
+    table.insert(bottom_button_line, 'cy_audio')
+    table.insert(bottom_button_line, 'cy_sub')
+    table.insert(bottom_button_line, 'pl_prev')
+    table.insert(bottom_button_line, 'skipback')
+    if user_opts.showjump then
+        table.insert(bottom_button_line, 'jumpback')
+    end
+    table.insert(bottom_button_line, 'playpause')
+    if user_opts.showjump then
+        table.insert(bottom_button_line, 'jumpfrwd')
+    end
+    table.insert(bottom_button_line, 'skipfrwd')
+    table.insert(bottom_button_line, 'pl_next')
+    table.insert(bottom_button_line, 'tog_info')
+    table.insert(bottom_button_line, 'tog_fs')
+
+    -- build up the main mapping object
+    local mapping = {}
+    local window_controls_enabled = window_controls_enabled()
+    print(window_controls_enabled)
+    if window_controls_enabled then
+        table.insert(mapping, {
+            'minimize',
+            'maximize',
+            'close'
+        })
+    end
+    table.insert(mapping, {
+        'seekbar'
+    })
+    table.insert(mapping, bottom_button_line)
+
+    return mapping
+end
+
 
 --
 -- Helperfunctions
@@ -476,16 +500,6 @@ function get_track(type)
         end
     end
     return 0
-end
-
--- WindowControl helpers
-function window_controls_enabled()
-    val = user_opts.windowcontrols
-    if val == 'auto' then
-        return (not state.border) or state.fullscreen
-    else
-        return val ~= 'no'
-    end
 end
 
 --
@@ -2308,7 +2322,7 @@ local osc_key_bindings = {}
 
 function osc_kb_control_up()
     visibility_mode('always', true)
-    
+    local keyboard_controls = build_keyboard_controls()
     local rows = {}
     local active_row_index = 0
     local active_row_name = nil
@@ -2342,6 +2356,7 @@ end
 
 function osc_kb_control_down()
     visibility_mode('always', true)
+    local keyboard_controls = build_keyboard_controls()
     local rows = {}
     local active_row_index = 0
     local active_row_name = nil
@@ -2376,6 +2391,7 @@ end
 
 function osc_kb_control_left()
     visibility_mode('always', true)
+    local keyboard_controls = build_keyboard_controls()
     
     local active_control_name = nil
     for row_name, row_controls in pairs(keyboard_controls) do
@@ -2410,6 +2426,7 @@ end
 
 function osc_kb_control_right()
     visibility_mode('always', true)
+    local keyboard_controls = build_keyboard_controls()
     
     local active_control_name = nil
     for row_name, row_controls in pairs(keyboard_controls) do
