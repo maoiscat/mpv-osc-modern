@@ -125,27 +125,34 @@ local osc_styles = {
     elementHighlight = '{\\blur1\\bord1\\1c&HFFC033&}',
 }
 
-local keyboard_controls = {
-    [0] = {
-        'minimize',
-        'maximize',
-        'close'
-    },
-    [1] = {
-        'seekbar'
-    },
-    [2] = {
-        'cy_audio',
-        'cy_sub',
-        'pl_prev',
-        'skipback',
-        'playpause',
-        'skipfrwd',
-        'pl_next',
-        'tog_info',
-        'tog_fs'
-    },
-}
+function build_keyboard_controls()
+    return {
+        [0] = {
+            'minimize',
+            'maximize',
+            'close'
+        },
+        [1] = {
+            'seekbar'
+        },
+        [2] = {
+            'cy_audio',
+            'cy_sub',
+            'pl_prev',
+            'skipback',
+            'jumpback',
+            'playpause',
+            'jumpfrwd',
+            'skipfrwd',
+            'pl_next',
+            'tog_info',
+            'tog_fs'
+        },
+    }
+end
+
+
+local keyboard_controls = build_keyboard_controls()
 
 -- internal states, do not touch
 local state = {
@@ -1334,6 +1341,9 @@ function osc_init()
         ne.eventresponder['mbtn_right_down'] =
             --function () mp.command('seek -60') end
             function () mp.commandv('seek', -60, jumpmode) end
+        ne.eventresponder['enter'] =
+            --function () mp.command('seek -5') end
+            function () mp.commandv('seek', -jumpamount, jumpmode) end
 
 
         --jumpfrwd
@@ -1349,6 +1359,9 @@ function osc_init()
         ne.eventresponder['mbtn_right_down'] =
             --function () mp.command('seek +60') end
             function () mp.commandv('seek', 60, jumpmode) end
+        ne.eventresponder['enter'] =
+            --function () mp.command('seek +5') end
+            function () mp.commandv('seek', jumpamount, jumpmode) end
     end
     
 
