@@ -207,9 +207,7 @@ function build_keyboard_controls()
 
     -- build up the main mapping object
     local mapping = {}
-    local window_controls_enabled = window_controls_enabled()
-    print(window_controls_enabled)
-    if window_controls_enabled then
+    if window_controls_enabled() then
         table.insert(mapping, {
             'minimize',
             'maximize',
