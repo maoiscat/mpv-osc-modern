@@ -2284,6 +2284,16 @@ end
 -- mode can be auto/always/never/cycle
 -- the modes only affect internal variables and not stored on its own.
 function visibility_mode(mode, no_osd)
+    if mode == "cycle" then
+        if not state.enabled then
+            mode = "auto"
+        elseif user_opts.visibility ~= "always" then
+            mode = "always"
+        else
+            mode = "never"
+        end
+    end
+
     if mode == 'auto' then
         always_on(false)
         enable_osc(true)
@@ -2296,9 +2306,10 @@ function visibility_mode(mode, no_osd)
         msg.warn('Ignoring unknown visibility mode \"' .. mode .. '\"')
         return
     end
-    
+
 	user_opts.visibility = mode
-	
+    utils.shared_script_property_set("osc-visibility", mode)
+
     if not no_osd and tonumber(mp.get_property('osd-level')) >= 1 then
         mp.osd_message('OSC visibility: ' .. mode)
     end
