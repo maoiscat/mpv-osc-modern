@@ -654,16 +654,6 @@ function render_elements(master_ass)
         style_ass:merge(element.style_ass)
         ass_append_alpha(style_ass, element.layout.alpha, 0)
 
-        if mouse_hit(element) then
-            -- mouse down styling
-            if (element.styledown) then
-                --style_ass:append(osc_styles.elementHighlight)
-                -- TODO allow keyboard to alter this
-                state.highlight_element = element.name
-            end
-        
-        end
-
         if element.eventresponder and (state.active_element == n) then
             -- run render event functions
             if not (element.eventresponder.render == nil) then
@@ -2284,16 +2274,6 @@ end
 -- mode can be auto/always/never/cycle
 -- the modes only affect internal variables and not stored on its own.
 function visibility_mode(mode, no_osd)
-    if mode == "cycle" then
-        if not state.enabled then
-            mode = "auto"
-        elseif user_opts.visibility ~= "always" then
-            mode = "always"
-        else
-            mode = "never"
-        end
-    end
-
     if mode == 'auto' then
         always_on(false)
         enable_osc(true)
@@ -2306,10 +2286,9 @@ function visibility_mode(mode, no_osd)
         msg.warn('Ignoring unknown visibility mode \"' .. mode .. '\"')
         return
     end
-
+    
 	user_opts.visibility = mode
-    utils.shared_script_property_set("osc-visibility", mode)
-
+	
     if not no_osd and tonumber(mp.get_property('osd-level')) >= 1 then
         mp.osd_message('OSC visibility: ' .. mode)
     end
