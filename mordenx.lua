@@ -52,6 +52,7 @@ local user_opts = {
     visibility = 'auto',        -- only used at init to set visibility_mode(...)
     windowcontrols = 'auto',    -- whether to show window controls
     language = 'eng',		-- eng=English, chs=Chinese
+    keyboardnavigation = false, -- enable directional keyboard navigation
     chapter_fmt = "Chapter: %s", -- chapter print format for seekbar-hover. "no" to disable
 }
 
@@ -121,6 +122,7 @@ local osc_styles = {
     Title = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H0\\fs38\\q2\\fn' .. user_opts.font .. '}',
     WinCtrl = '{\\blur1\\bord0.5\\1c&HFFFFFF&\\3c&H0\\fs20\\fnmpv-osd-symbols}',
     elementDown = '{\\1c&H999999&}',
+    elementHighlight = '{\\blur1\\bord1\\1c&HFFC033&}',
 }
 
 -- internal states, do not touch
@@ -155,6 +157,7 @@ local state = {
     osd = mp.create_osd_overlay('ass-events'),
     lastvisibility = user_opts.visibility,	-- save last visibility on pause if showonpause
     fulltime = user_opts.timems,
+    highlight_element = 'cy_audio',
     chapter_list = {},                      -- sorted by time
 }
 
@@ -166,6 +169,59 @@ local builtin_osc_enabled = mp.get_property_native('osc')
 if builtin_osc_enabled then
     mp.set_property_native('osc', false)
 end
+
+--
+
+
+-- WindowControl helpers
+function window_controls_enabled()
+    val = user_opts.windowcontrols
+    if val == 'auto' then
+        return (not state.border) or state.fullscreen
+    else
+        return val ~= 'no'
+    end
+end
+
+
+
+function build_keyboard_controls()
+
+    -- prepare the main button row
+    local bottom_button_line = {}
+    table.insert(bottom_button_line, 'cy_audio')
+    table.insert(bottom_button_line, 'cy_sub')
+    table.insert(bottom_button_line, 'pl_prev')
+    table.insert(bottom_button_line, 'skipback')
+    if user_opts.showjump then
+        table.insert(bottom_button_line, 'jumpback')
+    end
+    table.insert(bottom_button_line, 'playpause')
+    if user_opts.showjump then
+        table.insert(bottom_button_line, 'jumpfrwd')
+    end
+    table.insert(bottom_button_line, 'skipfrwd')
+    table.insert(bottom_button_line, 'pl_next')
+    table.insert(bottom_button_line, 'tog_info')
+    table.insert(bottom_button_line, 'tog_fs')
+
+    -- build up the main mapping object
+    local mapping = {}
+    if window_controls_enabled() then
+        table.insert(mapping, {
+            'minimize',
+            'maximize',
+            'close'
+        })
+    end
+    table.insert(mapping, {
+        'seekbar'
+    })
+    table.insert(mapping, bottom_button_line)
+
+    return mapping
+end
+
 
 --
 -- Helperfunctions
@@ -444,16 +500,6 @@ function get_track(type)
     return 0
 end
 
--- WindowControl helpers
-function window_controls_enabled()
-    val = user_opts.windowcontrols
-    if val == 'auto' then
-        return (not state.border) or state.fullscreen
-    else
-        return val ~= 'no'
-    end
-end
-
 --
 -- Element Management
 --
@@ -586,7 +632,6 @@ function get_chapter(possec)
 end
 
 function render_elements(master_ass)
-
     -- when the slider is dragged or hovered and we have a target chapter name
     -- then we use it instead of the normal title. we calculate it before the
     -- render iterations because the title may be rendered before the slider.
@@ -628,6 +673,10 @@ function render_elements(master_ass)
             end
         end
 
+        if user_opts.keyboardnavigation and state.highlight_element == element.name then
+            style_ass:append(osc_styles.elementHighlight)
+        end
+        
         local elem_ass = assdraw.ass_new()
         elem_ass:merge(style_ass)
         
@@ -896,6 +945,7 @@ end
 function new_element(name, type)
     elements[name] = {}
     elements[name].type = type
+    elements[name].name = name
 
     -- add default stuff
     elements[name].eventresponder = {}
@@ -1293,6 +1343,9 @@ function osc_init()
         ne.eventresponder['mbtn_right_down'] =
             --function () mp.command('seek -60') end
             function () mp.commandv('seek', -60, jumpmode) end
+        ne.eventresponder['enter'] =
+            --function () mp.command('seek -5') end
+            function () mp.commandv('seek', -jumpamount, jumpmode) end
 
 
         --jumpfrwd
@@ -1308,6 +1361,9 @@ function osc_init()
         ne.eventresponder['mbtn_right_down'] =
             --function () mp.command('seek +60') end
             function () mp.commandv('seek', 60, jumpmode) end
+        ne.eventresponder['enter'] =
+            --function () mp.command('seek +5') end
+            function () mp.commandv('seek', jumpamount, jumpmode) end
     end
     
 
@@ -1327,6 +1383,10 @@ function osc_init()
         function () show_message(get_chapterlist()) end
         --function () mp.command('seek -60') end
         --function () mp.commandv('seek', -60, 'relative', 'keyframes') end
+    ne.eventresponder['enter'] =
+        --function () mp.command('seek -5') end
+        --function () mp.commandv('seek', -5, 'relative', 'keyframes') end
+        function () mp.commandv("add", "chapter", -1) end
 
     --skipfrwd
     ne = new_element('skipfrwd', 'button')
@@ -1344,6 +1404,10 @@ function osc_init()
         function () show_message(get_chapterlist()) end
         --function () mp.command('seek +60') end
         --function () mp.commandv('seek', 60, 'relative', 'keyframes') end
+    ne.eventresponder['enter'] =
+        --function () mp.command('seek +5') end
+        --function () mp.commandv('seek', 5, 'relative', 'keyframes') end
+        function () mp.commandv("add", "chapter", 1) end
 
     --
     update_tracklist()
@@ -1378,6 +1442,8 @@ function osc_init()
         function () set_track('audio', -1) end
     ne.eventresponder['mbtn_mid_up'] =
         function () show_message(get_tracklist('audio')) end
+    ne.eventresponder['enter'] =
+        function () set_track('audio', 1); show_message(get_tracklist('audio')) end
                 
     --cy_sub
     ne = new_element('cy_sub', 'button')
@@ -1409,6 +1475,8 @@ function osc_init()
         function () set_track('sub', -1) end
     ne.eventresponder['mbtn_mid_up'] =
         function () show_message(get_tracklist('sub')) end
+    ne.eventresponder['enter'] =
+        function () set_track('sub', 1); show_message(get_tracklist('sub')) end
         
     --tog_fs
     ne = new_element('tog_fs', 'button')
@@ -1611,6 +1679,10 @@ function show_osc()
     state.showtime = mp.get_time()
 
     osc_visible(true)
+    
+    if user_opts.keyboardnavigation == true then
+        osc_enable_key_bindings()
+    end
 
     if (user_opts.fadeduration > 0) then
         state.anitype = nil
@@ -1624,6 +1696,9 @@ function hide_osc()
         -- no-op and won't render again to remove the osc, so do that manually.
         state.osc_visible = false
         render_wipe()
+        if user_opts.keyboardnavigation == true then
+            osc_disable_key_bindings()
+        end
     elseif (user_opts.fadeduration > 0) then
         if not(state.osc_visible == false) then
             state.anitype = 'out'
@@ -2199,16 +2274,6 @@ end
 -- mode can be auto/always/never/cycle
 -- the modes only affect internal variables and not stored on its own.
 function visibility_mode(mode, no_osd)
-    if mode == "cycle" then
-        if not state.enabled then
-            mode = "auto"
-        elseif user_opts.visibility ~= "always" then
-            mode = "always"
-        else
-            mode = "never"
-        end
-    end
-
     if mode == 'auto' then
         always_on(false)
         enable_osc(true)
@@ -2221,10 +2286,9 @@ function visibility_mode(mode, no_osd)
         msg.warn('Ignoring unknown visibility mode \"' .. mode .. '\"')
         return
     end
-
+    
 	user_opts.visibility = mode
-    utils.shared_script_property_set("osc-visibility", mode)
-
+	
     if not no_osd and tonumber(mp.get_property('osd-level')) >= 1 then
         mp.osd_message('OSC visibility: ' .. mode)
     end
@@ -2237,6 +2301,201 @@ function visibility_mode(mode, no_osd)
     state.input_enabled = false
     request_tick()
 end
+
+
+-- KeyboardControl
+--
+
+local osc_key_bindings = {}
+
+function osc_kb_control_up()
+    visibility_mode('always', true)
+    local keyboard_controls = build_keyboard_controls()
+    local rows = {}
+    local active_row_index = 0
+    local active_row_name = nil
+
+    local row_index = -1
+    for row_name, row_controls in pairs(keyboard_controls) do
+        row_index = row_index + 1
+        rows[row_index] = row_name
+        for i, control in pairs(row_controls) do
+            if control == state.highlight_element then
+                active_row_index = row_index
+                active_row_name = row_name
+            end
+        end
+    end
+
+    if active_row_index - 1 < 0 then
+        return
+    end
+
+    local next_row_index = active_row_index - 1
+
+    local new_active_row_name = rows[next_row_index]
+    local new_active_row = keyboard_controls[new_active_row_name]
+
+    for i, control in pairs(new_active_row) do
+        state.highlight_element = control
+        return
+    end
+end
+
+function osc_kb_control_down()
+    visibility_mode('always', true)
+    local keyboard_controls = build_keyboard_controls()
+    local rows = {}
+    local active_row_index = 0
+    local active_row_name = nil
+
+    local row_index = -1
+    for row_name, row_controls in pairs(keyboard_controls) do
+        row_index = row_index + 1
+        rows[row_index] = row_name
+        for i, control in pairs(row_controls) do
+            if control == state.highlight_element then
+                active_row_index = row_index
+                active_row_name = row_name
+            end
+        end
+    end
+
+    if active_row_index + 1 > #rows then
+        return
+    end
+
+    local next_row_index = active_row_index + 1
+
+    local new_active_row_name = rows[next_row_index]
+    local new_active_row = keyboard_controls[new_active_row_name]
+
+    for i, control in pairs(new_active_row) do
+        state.highlight_element = control
+        return
+    end
+
+end
+
+function osc_kb_control_left()
+    visibility_mode('always', true)
+    local keyboard_controls = build_keyboard_controls()
+    
+    local active_control_name = nil
+    for row_name, row_controls in pairs(keyboard_controls) do
+        local controls = {}
+        local controls_index = -1
+        for i, control in pairs(row_controls) do
+            controls_index = controls_index + 1
+            controls[controls_index] = control
+            if control == state.highlight_element then
+                active_control_index = controls_index
+                active_control_name = control
+            end
+        end
+
+        if active_control_name == 'seekbar' then
+            mp.commandv('seek', -5, 'exact', 'keyframes')
+            return
+        end
+
+        if active_control_name then
+            if active_control_index - 1 < 0 then
+                return
+            end
+        
+            local next_control_index = active_control_index - 1
+            state.highlight_element = controls[next_control_index]
+            return
+        end
+    end
+
+end
+
+function osc_kb_control_right()
+    visibility_mode('always', true)
+    local keyboard_controls = build_keyboard_controls()
+    
+    local active_control_name = nil
+    for row_name, row_controls in pairs(keyboard_controls) do
+        local controls = {}
+        local controls_index = -1
+        for i, control in pairs(row_controls) do
+            controls_index = controls_index + 1
+            controls[controls_index] = control
+            if control == state.highlight_element then
+                active_control_index = controls_index
+                active_control_name = control
+            end
+        end
+
+        if active_control_name == 'seekbar' then
+            mp.commandv('seek', 5, 'exact', 'keyframes')
+            return
+        end
+
+        if active_control_name then
+            if active_control_index + 1 > #controls then
+                return
+            end
+        
+            local next_control_index = active_control_index + 1
+            state.highlight_element = controls[next_control_index]
+            return
+        end
+    end
+
+end
+
+function osc_kb_control_back()
+    visibility_mode('auto', true)
+end
+
+function osc_kb_control_enter()
+    visibility_mode('always', true)
+    for n = 1, #elements do
+        if elements[n].name == state.highlight_element then
+            
+            local action = 'enter'
+            if element_has_action(elements[n], action) then
+                elements[n].eventresponder[action](elements[n])
+                return
+            end
+
+            local action = 'mbtn_left_up'
+            if element_has_action(elements[n], action) then
+                elements[n].eventresponder[action](elements[n])
+                return
+            end
+        end
+    end
+
+end
+
+function osc_add_key_binding(key, name, fn, flags)
+	osc_key_bindings[#osc_key_bindings + 1] = name
+	mp.add_forced_key_binding(key, name, fn, flags)
+end
+
+-- This is based on code from https://github.com/darsain/uosc
+function osc_enable_key_bindings()
+	osc_key_bindings = {}
+	-- The `mp.set_key_bindings()` method would be easier here, but that
+	-- doesn't support 'repeatable' flag, so we are stuck with this monster.
+	osc_add_key_binding('up',              'osc-kb-control-prev1',        osc_kb_control_up, 'repeatable')
+	osc_add_key_binding('down',            'osc-kb-control-next1',        osc_kb_control_down, 'repeatable')
+	osc_add_key_binding('left',            'osc-kb-control-left1',        osc_kb_control_left, 'repeatable')
+	osc_add_key_binding('right',           'osc-kb-control-right1',      osc_kb_control_right, 'repeatable')
+	osc_add_key_binding('enter',      'osc-kb-control-select-alt3', osc_kb_control_enter, 'repeatable')
+	osc_add_key_binding('esc',        'osc-kb-control-close',       osc_kb_control_back, 'repeatable')
+end
+
+function osc_disable_key_bindings()
+	for _, name in ipairs(osc_key_bindings) do mp.remove_key_binding(name) end
+	osc_key_bindings = {}
+end
+
+
 
 visibility_mode(user_opts.visibility, true)
 mp.register_script_message('osc-visibility', visibility_mode)
