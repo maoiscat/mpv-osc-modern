@@ -673,7 +673,7 @@ function render_elements(master_ass)
             end
         end
 
-        if state.highlight_element == element.name then
+        if user_opts.keyboardnavigation and state.highlight_element == element.name then
             style_ass:append(osc_styles.elementHighlight)
         end
         
