@@ -29,7 +29,7 @@ like the built-in script, some buttons may accept multiple mouse actions, here i
 ## Seekbar
 * Left mouse button: seek to chosen position.
 * Right mouse button: seek to the head of chosen chapter
-## Playlist back/forwad buttons
+## Playlist back/forward buttons
 * Left mouse button: play previous/next file.
 * Right mouse button: show playlist.
 ## Skip back/forward buttons
