@@ -64,6 +64,20 @@ local jumpicons = {
     default = {'\xEF\x8E\xB2', '\xEF\x8E\xB2'}, -- second icon is mirrored in layout() 
 } 
 
+local icons = {
+  previous = '\xEF\x8E\xB5',
+  next = '\xEF\x8E\xB4',
+  play = '\xEF\x8E\xAA',
+  pause = '\xEF\x8E\xA7',
+  backward = '\xEF\x8E\xA0',
+  forward = '\xEF\x8E\x9F',
+  audio = '\xEF\x8E\xB7',
+  sub = '\xEF\x8F\x93',
+  minimize = '\xEF\x85\xAC',
+  fullscreen = '\xEF\x85\xAD',  
+  info = '',
+}
+
 -- Localization
 local language = {
 	['eng'] = {
@@ -1284,7 +1298,7 @@ function osc_init()
     -- prev
     ne = new_element('pl_prev', 'button')
 
-    ne.content = '\xEF\x8E\xB5'
+    ne.content = icons.previous
     ne.enabled = (pl_pos > 1) or (loop ~= 'no')
     ne.eventresponder['mbtn_left_up'] =
         function ()
@@ -1296,7 +1310,7 @@ function osc_init()
     --next
     ne = new_element('pl_next', 'button')
 
-    ne.content = '\xEF\x8E\xB4'
+    ne.content = icons.next
     ne.enabled = (have_pl and (pl_pos < pl_count)) or (loop ~= 'no')
     ne.eventresponder['mbtn_left_up'] =
         function ()
@@ -1312,9 +1326,9 @@ function osc_init()
 
     ne.content = function ()
         if mp.get_property('pause') == 'yes' then
-            return ('\xEF\x8E\xAA')
+            return (icons.play)
         else
-            return ('\xEF\x8E\xA7')
+            return (icons.pause)
         end
     end
     ne.eventresponder['mbtn_left_up'] =
@@ -1371,7 +1385,7 @@ function osc_init()
     ne = new_element('skipback', 'button')
 
     ne.softrepeat = true
-    ne.content = '\xEF\x8E\xA0'
+    ne.content = icons.backward
     ne.enabled = (have_ch) -- disables button when no chapters available.
     ne.eventresponder['mbtn_left_down'] =
         --function () mp.command('seek -5') end
@@ -1392,7 +1406,7 @@ function osc_init()
     ne = new_element('skipfrwd', 'button')
 
     ne.softrepeat = true
-    ne.content = '\xEF\x8E\x9F'
+    ne.content = icons.forward
     ne.enabled = (have_ch) -- disables button when no chapters available.
     ne.eventresponder['mbtn_left_down'] =
         --function () mp.command('seek +5') end
@@ -1417,7 +1431,7 @@ function osc_init()
     ne.enabled = (#tracks_osc.audio > 0)
     ne.off = (get_track('audio') == 0)
     ne.visible = (osc_param.playresx >= 540)
-    ne.content = '\xEF\x8E\xB7'
+    ne.content = icons.audio
     ne.tooltip_style = osc_styles.Tooltip
     ne.tooltipF = function ()
 		local msg = texts.off
@@ -1450,7 +1464,7 @@ function osc_init()
     ne.enabled = (#tracks_osc.sub > 0)
     ne.off = (get_track('sub') == 0)
     ne.visible = (osc_param.playresx >= 600)
-    ne.content = '\xEF\x8F\x93'
+    ne.content = icons.sub
     ne.tooltip_style = osc_styles.Tooltip
     ne.tooltipF = function ()
 		local msg = texts.off
@@ -1482,9 +1496,9 @@ function osc_init()
     ne = new_element('tog_fs', 'button')
     ne.content = function ()
         if (state.fullscreen) then
-            return ('\xEF\x85\xAC')
+            return (icons.minimize)
         else
-            return ('\xEF\x85\xAD')
+            return (icons.fullscreen)
         end
     end
     ne.visible = (osc_param.playresx >= 540)
@@ -1493,7 +1507,7 @@ function osc_init()
 
     --tog_info
     ne = new_element('tog_info', 'button')
-    ne.content = ''
+    ne.content = icons.info
     ne.visible = (osc_param.playresx >= 600)
     ne.eventresponder['mbtn_left_up'] =
         function () mp.commandv('script-binding', 'stats/display-stats-toggle') end
