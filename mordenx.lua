@@ -18,6 +18,7 @@ local utils = require 'mp.utils'
 local user_opts = {
     showwindowed = true,        -- show OSC when windowed?
     showfullscreen = true,      -- show OSC when fullscreen?
+    idlescreen = true,          -- draw logo and text when idle
     scalewindowed = 1.0,        -- scaling of the controller when windowed
     scalefullscreen = 1.0,      -- scaling of the controller when fullscreen
     scaleforcedwindow = 2.0,    -- scaling when rendered on a forced window
@@ -2089,9 +2090,11 @@ function tick()
     if (not state.enabled) then return end
 
     if (state.idle) then
-		show_logo()
-        -- render idle message
-        msg.trace('idle message')
+        if user_opts.idlescreen then
+	   show_logo()
+	   -- render idle message
+           msg.trace('idle message')
+        end
 
         if state.showhide_enabled then
             mp.disable_key_bindings('showhide')
