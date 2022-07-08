@@ -1,7 +1,7 @@
-# mpv-osc-morden
+# mpv-osc-modern
 Yet another mpv osc script, based on mpv built-in osc
 
-![img](https://github.com/maoiscat/mpv-osc-morden/blob/main/preview.png)
+![img](https://github.com/maoiscat/mpv-osc-modern/blob/main/preview.png)
 
 # How to install
 
