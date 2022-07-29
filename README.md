@@ -37,14 +37,14 @@ background=1
 Config file locates at "\~\~/script-opts/osc.conf". Supported options are listed below.
 
 ```
-    showwindowed=yes/no      -- show OSC when windowed?
-    showfullscreen=yes/no    -- show OSC when fullscreen?
-    scalewindowed=1          -- scaling of the controller when windowed
-    scalefullscreen=1        -- scaling of the controller when fullscreen
-    scaleforcedwindow=2      -- scaling when rendered on a forced window
-    vidscale=yes/no          -- scale the controller with the video?
-    hidetimeout=1000         -- duration in ms until the OSC hides if no mouse movement. enforced non-negative for the user but internally negative is 'always-on'.
-    fadeduration=500         -- duration of fade out in ms 0=no fade
+    showwindowed=yes/no             -- show OSC when windowed?
+    showfullscreen=yes/no           -- show OSC when fullscreen?
+    scalewindowed=1                 -- scaling of the controller when windowed
+    scalefullscreen=1               -- scaling of the controller when fullscreen
+    scaleforcedwindow=2             -- scaling when rendered on a forced window
+    vidscale=yes/no                 -- scale the controller with the video?
+    hidetimeout=1000                -- duration in ms until the OSC hides if no mouse movement. enforced non-negative for the user but internally negative is 'always-on'.
+    fadeduration=500                -- duration of fade out in ms 0=no fade
     minmousemove=3                  -- minimum amount of pixels the mouse has to move between ticks to make the OSC show up
     iamaprogrammer=yes/no           -- use native mpv values and disable OSC internal track list management (and some functions that depend on it)
     font='mpv-osd-symbols'          -- default osc font
@@ -58,7 +58,7 @@ Config file locates at "\~\~/script-opts/osc.conf". Supported options are listed
     visibility=auto/yes/no          -- only used at init to set visibility_mode(...)
     windowcontrols=auto/yes/no      -- whether to show window controls
     volumecontrol=yes/no            -- whether to show mute button and volumne slider
-    language='eng'                  -- eng=English chs=Chinese
+    language=eng/cns                -- eng=English chs=Chinese
 ```
 
 # Button Actions
