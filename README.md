@@ -58,7 +58,7 @@ Config file locates at "\~\~/script-opts/osc.conf". Supported options are listed
     visibility=auto/yes/no          -- only used at init to set visibility_mode(...)
     windowcontrols=auto/yes/no      -- whether to show window controls
     volumecontrol=yes/no            -- whether to show mute button and volumne slider
-    language=eng/cns                -- eng=English chs=Chinese
+    language=eng/chs                -- eng=English chs=Chinese
 ```
 
 # Button Actions
