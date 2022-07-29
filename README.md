@@ -25,9 +25,11 @@ Then edit "\~\~/mpv.conf", add the following lines to the end
 ```
 osc=no
 
-[idle]
+[Idle]
 profile-cond=p["idle-active"]
 profile-restore=copy-equal
+title=' '
+keepaspect=no
 background=1
 ```
 # Configuration
