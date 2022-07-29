@@ -45,20 +45,20 @@ Config file locates at "\~\~/script-opts/osc.conf". Supported options are listed
     vidscale=yes/no          -- scale the controller with the video?
     hidetimeout=1000         -- duration in ms until the OSC hides if no mouse movement. enforced non-negative for the user but internally negative is 'always-on'.
     fadeduration=500         -- duration of fade out in ms 0=no fade
-    minmousemove=3           -- minimum amount of pixels the mouse has to move between ticks to make the OSC show up
-    iamaprogrammer=yes/no    -- use native mpv values and disable OSC internal track list management (and some functions that depend on it)
-    font='mpv-osd-symbols'   -- default osc font
-    seekbarhandlesize=1.0    -- size ratio of the slider handle range 0 ~ 1
-    seekrange=yes/no         -- show seekrange overlay
-    seekrangealpha=128       -- transparency of seekranges
-    seekbarkeyframes=yes/no  -- use keyframes when dragging the seekbar
-    title='${media-title}'   -- string compatible with property-expansion to be shown as OSC title
-    showtitle=yes/no         -- show title and no hide timeout on pause
-    timetotal=yes/no         -- display total time instead of remaining time?
-    visibility='auto'        -- only used at init to set visibility_mode(...)
-    windowcontrols='auto'    -- whether to show window controls
-    volumecontrol=yes/no     -- whether to show mute button and volumne slider
-    language='eng'           -- eng=English chs=Chinese
+    minmousemove=3                  -- minimum amount of pixels the mouse has to move between ticks to make the OSC show up
+    iamaprogrammer=yes/no           -- use native mpv values and disable OSC internal track list management (and some functions that depend on it)
+    font='mpv-osd-symbols'          -- default osc font
+    seekbarhandlesize=1.0           -- size ratio of the slider handle range 0 ~ 1
+    seekrange=yes/no                -- show seekrange overlay
+    seekrangealpha=128              -- transparency of seekranges
+    seekbarkeyframes=yes/no         -- use keyframes when dragging the seekbar
+    title='${media-title}'          -- string compatible with property-expansion to be shown as OSC title
+    showtitle=yes/no                -- show title and no hide timeout on pause
+    timetotal=yes/no                -- display total time instead of remaining time?
+    visibility=auto/yes/no          -- only used at init to set visibility_mode(...)
+    windowcontrols=auto/yes/no      -- whether to show window controls
+    volumecontrol=yes/no            -- whether to show mute button and volumne slider
+    language='eng'                  -- eng=English chs=Chinese
 ```
 
 # Button Actions
