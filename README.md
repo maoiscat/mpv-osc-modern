@@ -79,10 +79,3 @@ Some buttons may accept multiple mouse actions, here is a list:
 ## cycle_audio/subtitle
 * mbtn_left/right: cycle to next/previous track.
 * mbtn_mid: show track list.
-
-# One more thing
-
-To you guys who is confused about the play/pause button display, and want it be swapped, go to line 1212 in the lua file , seeing something like "mp.get_property('pause') == 'yes'", and change yes to no.
-
-It's my personal favor, rather than a bug.
-
