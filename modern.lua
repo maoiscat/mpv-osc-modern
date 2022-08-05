@@ -1209,7 +1209,7 @@ function osc_init()
     ne = new_element('playpause', 'button')
 
     ne.content = function ()
-        if mp.get_property('pause') == 'yes' then
+        if mp.get_property('pause') == 'no' then
             return ('\xEF\x8E\xA7')
         else
             return ('\xEF\x8E\xAA')
