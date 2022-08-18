@@ -1324,6 +1324,10 @@ function osc_init()
     end
     ne.eventresponder['mbtn_left_up'] =
         function () mp.commandv('cycle', 'mute') end
+    ne.eventresponder["wheel_up_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", 5) end
+    ne.eventresponder["wheel_down_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", -5) end
         
     --tog_fs
     ne = new_element('tog_fs', 'button')
@@ -1493,6 +1497,10 @@ function osc_init()
         function (element) element.state.mbtnleft = false end
     ne.eventresponder['reset'] =
         function (element) element.state.lastseek = nil end
+    ne.eventresponder["wheel_up_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", 5) end
+    ne.eventresponder["wheel_down_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", -5) end
 
     -- tc_left (current pos)
     ne = new_element('tc_left', 'button')
