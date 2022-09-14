@@ -1,6 +1,15 @@
 # mpv-osc-modern
 
-VER 1.11
+VER 1.1.0
+
+changelog:
+1. Gui activation area is limited to gui area.
+2. Time slider show chapter name.
+3. Volume slider show volume number in tooltip.
+4. Volume slider use processed volume number to make loudness transition fluent.
+5. Mouse wheel up/down over volume slider to change volume.
+
+===
 
 Yet another mpv osc script, based on mpv built-in osc
 
