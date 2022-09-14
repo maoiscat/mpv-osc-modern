@@ -1,14 +1,6 @@
 # mpv-osc-modern
 
-updated 2022.7.8
-
-I have to say sorry that I misspelled the word "modern" to "morden". Now it is corrected.
-
-This osc is updated to provide a mute button and a simple volume slider, yet they can be disabled through the conf file.
-
-This modern.lua file is coded with [Lua](https://www.lua.org/), anyone can learn to develop his demanding feature.
-
----
+VER 1.11
 
 Yet another mpv osc script, based on mpv built-in osc
 
@@ -48,7 +40,6 @@ Config file locates at "\~\~/script-opts/osc.conf". Supported options are listed
     minmousemove=3                  -- minimum amount of pixels the mouse has to move between ticks to make the OSC show up
     iamaprogrammer=yes/no           -- use native mpv values and disable OSC internal track list management (and some functions that depend on it)
     font='mpv-osd-symbols'          -- default osc font
-    seekbarhandlesize=1.0           -- size ratio of the slider handle range 0 ~ 1
     seekrange=yes/no                -- show seekrange overlay
     seekrangealpha=128              -- transparency of seekranges
     seekbarkeyframes=yes/no         -- use keyframes when dragging the seekbar
@@ -58,6 +49,7 @@ Config file locates at "\~\~/script-opts/osc.conf". Supported options are listed
     visibility=auto/yes/no          -- only used at init to set visibility_mode(...)
     windowcontrols=auto/yes/no      -- whether to show window controls
     volumecontrol=yes/no            -- whether to show mute button and volumne slider
+    processvolume=yes/no            -- volume bar show processd volume
     language=eng/chs                -- eng=English chs=Chinese
 ```
 
