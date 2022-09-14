@@ -9,7 +9,7 @@ changelog:
 4. Volume slider use processed volume number to make loudness transition fluent.
 5. Mouse wheel up/down over volume slider to change volume.
 
-===
+------
 
 Yet another mpv osc script, based on mpv built-in osc
 
