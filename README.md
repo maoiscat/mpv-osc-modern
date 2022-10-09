@@ -1,4 +1,8 @@
 # mpv-osc-modern
+VER 1.1.1
+
+changelog:
+1. fix logo distortion issue due to recent libass update.
 
 VER 1.1.0
 
