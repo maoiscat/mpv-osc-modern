@@ -1,4 +1,9 @@
 # mpv-osc-modern
+VER 1.1.2
+
+changelog:
+1. add thumbnails in timeline integration (when [thumbfast](https://github.com/po5/thumbfast) is installed).
+
 VER 1.1.1
 
 changelog:
@@ -65,6 +70,10 @@ Config file locates at "\~\~/script-opts/osc.conf". Supported options are listed
     processvolume=yes/no            -- volume bar show processd volume
     language=eng/chs                -- eng=English chs=Chinese
 ```
+
+# Thumbnails
+
+To enable thumbnails in timeline, install [thumbfast](https://github.com/po5/thumbfast). No other step necessary.
 
 # Button Actions
 
