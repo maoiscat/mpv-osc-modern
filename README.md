@@ -22,6 +22,10 @@ border = no # Optional, but recommended
 
 edit osc.conf in "\~\~/script-opts/" folder, however many options are changed, so refer to the user_opts variable in the script file for details.
 
+# Thumbnails
+
+To enable thumbnails in timeline, install [thumbfast](https://github.com/po5/thumbfast). No other step necessary.
+
 # Buttons
 
 like the built-in script, some buttons may accept multiple mouse actions, here is a list:
