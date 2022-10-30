@@ -807,7 +807,7 @@ function render_elements(master_ass)
 
                             elem_ass:new_event()
                             elem_ass:pos(thumbX * r_w, ty - thumbMarginY - thumbfast.height * r_h)
-                            elem_ass:append(("{\\bord0\\1c&H%s&\\1a&H%X&}"):format(tooltipBgColor, tooltipBgAlpha))
+                            elem_ass:append(osc_styles.Tooltip)
                             elem_ass:draw_start()
                             elem_ass:rect_cw(-thumbPad * r_h, -thumbPad * r_h, (thumbfast.width + thumbPad) * r_w, (thumbfast.height + thumbPad) * r_h)
                             elem_ass:draw_stop()
