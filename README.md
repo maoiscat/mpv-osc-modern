@@ -1,4 +1,7 @@
 # mpv-osc-modern
+
+NOTICE: Anyone want a thumbnail may try the other ''with.thumbfast'' branch.
+
 VER 1.1.1
 
 changelog:
