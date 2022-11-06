@@ -194,7 +194,8 @@ local state = {
 local thumbfast = {
     width = 0,
     height = 0,
-    disabled = false
+    disabled = true,
+    available = false
 }
 
 local window_control_box_width = 138
@@ -792,18 +793,19 @@ function render_elements(master_ass)
                     elem_ass:append(tooltiplabel)
                     
                     -- thumbnail
-                    if not thumbfast.disabled and thumbfast.width ~= 0 and thumbfast.height ~= 0 then
-                        local osd_w = mp.get_property_number("osd-dimensions/w")
+                    if not thumbfast.disabled then
+                        local osd_w = mp.get_property_number("osd-width")
                         if osd_w then
                             local r_w, r_h = get_virt_scale_factor()
 
+                            local tooltip_font_size = 18
                             local thumbPad = 4
                             local thumbMarginX = 18 / r_w
-                            local thumbMarginY = 70
+                            local thumbMarginY = tooltip_font_size + thumbPad + 2 / r_h
                             local tooltipBgColor = "FFFFFF"
                             local tooltipBgAlpha = 80
                             local thumbX = math.min(osd_w - thumbfast.width - thumbMarginX, math.max(thumbMarginX, tx / r_w - thumbfast.width / 2))
-                            local thumbY = ((ty - thumbMarginY) / r_h - thumbfast.height)
+                            local thumbY = (ty - thumbMarginY) / r_h - thumbfast.height
 
                             elem_ass:new_event()
                             elem_ass:pos(thumbX * r_w, ty - thumbMarginY - thumbfast.height * r_h)
@@ -820,7 +822,7 @@ function render_elements(master_ass)
                         end
                     end
                 else
-                    if thumbfast.width ~= 0 and thumbfast.height ~= 0 then
+                    if thumbfast.available then
                         mp.commandv("script-message-to", "thumbfast", "clear")
                     end
                 end
