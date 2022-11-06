@@ -809,11 +809,14 @@ function render_elements(master_ass)
                             local thumbX = math.min(osd_w - thumbfast.width - thumbMarginX, math.max(thumbMarginX, tx / r_w - thumbfast.width / 2))
                             local thumbY = (ty - thumbMarginY) / r_h - thumbfast.height
 
+                            thumbX = math.floor(thumbX + 0.5)
+                            thumbY = math.floor(thumbY + 0.5)
+
                             elem_ass:new_event()
                             elem_ass:pos(thumbX * r_w, ty - thumbMarginY - thumbfast.height * r_h)
                             elem_ass:append(osc_styles.Tooltip)
                             elem_ass:draw_start()
-                            elem_ass:rect_cw(-thumbPad * r_h, -thumbPad * r_h, (thumbfast.width + thumbPad) * r_w, (thumbfast.height + thumbPad) * r_h)
+                            elem_ass:rect_cw(-thumbPad * r_w, -thumbPad * r_h, (thumbfast.width + thumbPad) * r_w, (thumbfast.height + thumbPad) * r_h)
                             elem_ass:draw_stop()
 
                             mp.commandv("script-message-to", "thumbfast", "thumb",
