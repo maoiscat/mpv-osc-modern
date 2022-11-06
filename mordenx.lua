@@ -673,14 +673,16 @@ function render_elements(master_ass)
     -- then we use it instead of the normal title. we calculate it before the
     -- render iterations because the title may be rendered before the slider.
     state.forced_title = nil
-    local se, ae = state.slider_element, elements[state.active_element]
-    if user_opts.chapter_fmt ~= "no" and se and (ae == se or (not ae and mouse_hit(se))) then
-        local dur = mp.get_property_number("duration", 0)
-        if dur > 0 then
-            local possec = get_slider_value(se) * dur / 100 -- of mouse pos
-            local ch = get_chapter(possec)
-            if ch and ch.title and ch.title ~= "" then
-                state.forced_title = string.format(user_opts.chapter_fmt, ch.title)
+    if thumbfast.disabled then
+        local se, ae = state.slider_element, elements[state.active_element]
+        if user_opts.chapter_fmt ~= "no" and se and (ae == se or (not ae and mouse_hit(se))) then
+            local dur = mp.get_property_number("duration", 0)
+            if dur > 0 then
+                local possec = get_slider_value(se) * dur / 100 -- of mouse pos
+                local ch = get_chapter(possec)
+                if ch and ch.title and ch.title ~= "" then
+                    state.forced_title = string.format(user_opts.chapter_fmt, ch.title)
+                end
             end
         end
     end
@@ -819,6 +821,23 @@ function render_elements(master_ass)
                                 thumbX,
                                 thumbY
                             )
+
+                            local se, ae = state.slider_element, elements[state.active_element]
+                            if user_opts.chapter_fmt ~= "no" and se and (ae == se or (not ae and mouse_hit(se))) then
+                                local dur = mp.get_property_number("duration", 0)
+                                if dur > 0 then
+                                    local possec = get_slider_value(se) * dur / 100 -- of mouse pos
+                                    local ch = get_chapter(possec)
+                                    if ch and ch.title and ch.title ~= "" then
+                                        elem_ass:new_event()
+                                        elem_ass:pos((thumbX + thumbfast.width / 2) * r_w, thumbY * r_h - tooltip_font_size)
+                                        elem_ass:an(an)
+                                        elem_ass:append(slider_lo.tooltip_style)
+                                        ass_append_alpha(elem_ass, slider_lo.alpha, 0)
+                                        elem_ass:append(string.format(user_opts.chapter_fmt, ch.title))
+                                    end
+                                end
+                            end
                         end
                     end
                 else
