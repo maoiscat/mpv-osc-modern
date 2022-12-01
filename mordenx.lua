@@ -2123,9 +2123,10 @@ function process_event(source, what)
 end
 
 function show_logo()
-	local osd_w, osd_h = 640, 360
-	local logo_x, logo_y = osd_w/2, osd_h/2-20
-	local ass = assdraw.ass_new()
+	local osd_w, osd_h, osd_aspect = mp.get_osd_size()
+    osd_w, osd_h = 360*osd_aspect, 360
+   	local logo_x, logo_y = osd_w/2, osd_h/2-20
+    local ass = assdraw.ass_new()
 	ass:new_event()
 	ass:pos(logo_x, logo_y)
 	ass:append('{\\1c&H8E348D&\\3c&H0&\\3a&H60&\\blur1\\bord0.5}')
