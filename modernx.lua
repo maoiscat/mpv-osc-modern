@@ -1,9 +1,9 @@
 -- mpv-osc-morden by maoiscat
 -- email:valarmor@163.com
--- https://github.com/maoiscat/mpv-osc-morden
+-- https://github.com/maoiscat/mpv-osc-modern
 
 -- fork by cyl0
--- https://github.com/cyl0/MordenX/
+-- https://github.com/cyl0/ModernX/
 
 local assdraw = require 'mp.assdraw'
 local msg = require 'mp.msg'
