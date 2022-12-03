@@ -53,6 +53,7 @@ local user_opts = {
     visibility = 'auto',        -- only used at init to set visibility_mode(...)
     windowcontrols = 'auto',    -- whether to show window controls
     language = 'eng',		-- eng=English, chs=Chinese
+    volumecontrol = true,       -- whether to show mute button and volumne slider
     keyboardnavigation = false, -- enable directional keyboard navigation
     chapter_fmt = "Chapter: %s", -- chapter print format for seekbar-hover. "no" to disable
 }
@@ -143,6 +144,8 @@ local osc_styles = {
     TransBg = '{\\blur100\\bord150\\1c&H000000&\\3c&H000000&}',
     SeekbarBg = '{\\blur0\\bord0\\1c&HFFFFFF&}',
     SeekbarFg = '{\\blur1\\bord1\\1c&HE39C42&}',
+    VolumebarBg = '{\\blur0\\bord0\\1c&H999999&}',
+    VolumebarFg = '{\\blur1\\bord1\\1c&HFFFFFF&}',
     Ctrl1 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs36\\fnmaterial-design-iconic-font}',
     Ctrl2 = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font}',
     Ctrl2Flip = '{\\blur0\\bord0\\1c&HFFFFFF&\\3c&HFFFFFF&\\fs24\\fnmaterial-design-iconic-font\\fry180',
@@ -185,6 +188,7 @@ local state = {
     border = true,
     maximized = false,
     osd = mp.create_osd_overlay('ass-events'),
+    mute = false,
     lastvisibility = user_opts.visibility,	-- save last visibility on pause if showonpause
     fulltime = user_opts.timems,
     highlight_element = 'cy_audio',
@@ -1222,8 +1226,8 @@ layouts = function ()
     --
     -- Seekbar
     --
-    new_element('bgbar1', 'box')
-    lo = add_layout('bgbar1')
+    new_element('seekbarbg', 'box')
+    lo = add_layout('seekbarbg')
     lo.geometry = {x = refX , y = refY - 96 , an = 5, w = osc_geo.w - 50, h = 2}
     lo.layer = 13
     lo.style = osc_styles.SeekbarBg
@@ -1240,6 +1244,24 @@ layouts = function ()
     local showjump = user_opts.showjump
     local offset = showjump and 60 or 0
     
+    --
+    -- Volumebar
+    --
+    lo = new_element('volumebarbg', 'box')
+    lo.visible = (osc_param.playresx >= 750) and user_opts.volumecontrol
+    lo = add_layout('volumebarbg')
+    lo.geometry = {x = 155, y = refY - 40, an = 4, w = 80, h = 2}
+    lo.layer = 13
+    lo.style = osc_styles.VolumebarBg
+
+    
+    lo = add_layout('volumebar')
+    lo.geometry = {x = 155, y = refY - 40, an = 4, w = 80, h = 8}
+    lo.style = osc_styles.VolumebarFg
+    lo.slider.gap = 3
+    lo.slider.tooltip_style = osc_styles.Tooltip
+    lo.slider.tooltip_an = 2
+
 	-- buttons
     lo = add_layout('pl_prev')
     lo.geometry = {x = refX - 120 - offset, y = refY - 40 , an = 5, w = 30, h = 24}
@@ -1290,19 +1312,28 @@ layouts = function ()
 
     lo = add_layout('cy_audio')
 	lo.geometry = {x = 37, y = refY - 40, an = 5, w = 24, h = 24}
-    lo.style = osc_styles.Ctrl3	
+    lo.style = osc_styles.Ctrl3
+    lo.visible = (osc_param.playresx >= 540)
 	
     lo = add_layout('cy_sub')
     lo.geometry = {x = 87, y = refY - 40, an = 5, w = 24, h = 24}
     lo.style = osc_styles.Ctrl3
+    lo.visible = (osc_param.playresx >= 600)
+
+    lo = add_layout('vol_ctrl')
+    lo.geometry = {x = 137, y = refY - 40, an = 5, w = 24, h = 24}
+    lo.style = osc_styles.Ctrl3
+    lo.visible = (osc_param.playresx >= 650)
 
 	lo = add_layout('tog_fs')
     lo.geometry = {x = osc_geo.w - 37, y = refY - 40, an = 5, w = 24, h = 24}
-    lo.style = osc_styles.Ctrl3    
+    lo.style = osc_styles.Ctrl3
+    lo.visible = (osc_param.playresx >= 540)    
 
 	lo = add_layout('tog_info')
     lo.geometry = {x = osc_geo.w - 87, y = refY - 40, an = 5, w = 24, h = 24}
     lo.style = osc_styles.Ctrl3
+    lo.visible = (osc_param.playresx >= 600)
     
     geo = { x = 25, y = refY - 132, an = 1, w = osc_geo.w - 50, h = 48 }
     lo = add_layout('title')
@@ -1310,6 +1341,7 @@ layouts = function ()
     lo.style = string.format('%s{\\clip(%f,%f,%f,%f)}', osc_styles.Title,
 								geo.x, geo.y - geo.h, geo.x + geo.w , geo.y)
 	lo.alpha[3] = 0
+    lo.button.maxchars = geo.w / 23
 end
 
 -- Validate string type user options
@@ -1570,7 +1602,25 @@ function osc_init()
         function () show_message(get_tracklist('sub')) end
     ne.eventresponder['enter'] =
         function () set_track('sub', 1); show_message(get_tracklist('sub')) end
-        
+    
+    -- vol_ctrl
+    ne = new_element('vol_ctrl', 'button')
+    ne.enabled = (get_track('audio')>0)
+    ne.visible = (osc_param.playresx >= 650) and user_opts.volumecontrol
+    ne.content = function ()
+        if (state.mute) then
+            return ('\xEF\x8E\xBB')
+        else
+            return ('\xEF\x8E\xBC')
+        end
+    end
+    ne.eventresponder['mbtn_left_up'] =
+        function () mp.commandv('cycle', 'mute') end
+    ne.eventresponder["wheel_up_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", 5) end
+    ne.eventresponder["wheel_down_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", -5) end
+    
     --tog_fs
     ne = new_element('tog_fs', 'button')
     ne.content = function ()
@@ -1706,7 +1756,46 @@ function osc_init()
     ne.eventresponder['reset'] =
         function (element) element.state.lastseek = nil end
 
-
+    --volumebar
+    ne = new_element('volumebar', 'slider')
+    ne.visible = (osc_param.playresx >= 700) and user_opts.volumecontrol
+    ne.enabled = (get_track('audio')>0)
+    ne.slider.markerF = function ()
+        return {}
+    end
+    ne.slider.seekRangesF = function()
+      return nil
+    end
+    ne.slider.posF =
+        function ()
+            local val = mp.get_property_number('volume', nil)
+            return val*val/100
+        end
+    ne.eventresponder['mouse_move'] =
+        function (element)
+            if not element.state.mbtnleft then return end -- allow drag for mbtnleft only!
+            local seekto = get_slider_value(element)
+            if (element.state.lastseek == nil) or
+                (not (element.state.lastseek == seekto)) then
+                    mp.commandv('set', 'volume', 10*math.sqrt(seekto))
+                    element.state.lastseek = seekto
+            end
+        end
+    ne.eventresponder['mbtn_left_down'] = --exact seeks on single clicks
+        function (element)
+            local seekto = get_slider_value(element)
+            mp.commandv('set', 'volume', 10*math.sqrt(seekto))
+            element.state.mbtnleft = true
+        end
+    ne.eventresponder['mbtn_left_up'] =
+        function (element) element.state.mbtnleft = false end
+    ne.eventresponder['reset'] =
+        function (element) element.state.lastseek = nil end
+    ne.eventresponder["wheel_up_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", 5) end
+    ne.eventresponder["wheel_down_press"] =
+        function () mp.commandv("osd-auto", "add", "volume", -5) end
+    
     -- tc_left (current pos)
     ne = new_element('tc_left', 'button')
     ne.content = function ()
@@ -2289,6 +2378,11 @@ mp.observe_property('fullscreen', 'bool',
     function(name, val)
         state.fullscreen = val
         request_init_resize()
+    end
+)
+mp.observe_property('mute', 'bool',
+    function(name, val)
+        state.mute = val
     end
 )
 mp.observe_property('border', 'bool',
