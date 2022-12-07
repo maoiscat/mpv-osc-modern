@@ -61,23 +61,25 @@ local user_opts = {
 
 -- Icons for jump button depending on jumpamount 
 local jumpicons = { 
-    [5] = {'\xEF\x8E\xB1', '\xEF\x8E\xA3'}, 
-    [10] = {'\xEF\x8E\xAF', '\xEF\x8E\xA1'}, 
-    [30] = {'\xEF\x8E\xB0', '\xEF\x8E\xA2'}, 
-    default = {'\xEF\x8E\xB2', '\xEF\x8E\xB2'}, -- second icon is mirrored in layout() 
+    [5] = {'\239\142\177', '\239\142\163'}, 
+    [10] = {'\239\142\175', '\239\142\161'}, 
+    [30] = {'\239\142\176', '\239\142\162'}, 
+    default = {'\239\142\178	', '\239\142\178'}, -- second icon is mirrored in layout() 
 } 
 
 local icons = {
-  previous = '\xEF\x8E\xB5',
-  next = '\xEF\x8E\xB4',
-  play = '\xEF\x8E\xAA',
-  pause = '\xEF\x8E\xA7',
-  backward = '\xEF\x8E\xA0',
-  forward = '\xEF\x8E\x9F',
-  audio = '\xEF\x8E\xB7',
-  sub = '\xEF\x8F\x93',
-  minimize = '\xEF\x85\xAC',
-  fullscreen = '\xEF\x85\xAD',  
+  previous = '\239\142\181',
+  next = '\239\142\180',
+  play = '\239\142\170',
+  pause = '\239\142\167',
+  backward = '\239\142\160',
+  forward = '\239\142\159',
+  audio = '\239\142\183',
+  volume = '\239\142\188',
+  volume_mute = '\239\142\187',
+  sub = '\239\143\147',
+  minimize = '\239\133\172',
+  fullscreen = '\239\133\173',  
   info = '',
 }
 
@@ -1612,9 +1614,9 @@ function osc_init()
     ne.visible = (osc_param.playresx >= 650) and user_opts.volumecontrol
     ne.content = function ()
         if (state.mute) then
-            return ('\xEF\x8E\xBB')
+            return (icons.volume_mute)
         else
-            return ('\xEF\x8E\xBC')
+            return (icons.volume)
         end
     end
     ne.eventresponder['mbtn_left_up'] =
