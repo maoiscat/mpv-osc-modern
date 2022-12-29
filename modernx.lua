@@ -2277,7 +2277,7 @@ function tick()
             ass:new_event()
             ass:pos(display_w / 2, icon_y + 65)
             ass:an(8)
-            ass:append('Drop files or URLs to play here.')
+            ass:append(texts.welcome)
         end
         set_osd(display_w, display_h, ass.text)
 
