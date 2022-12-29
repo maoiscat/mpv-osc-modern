@@ -1344,7 +1344,7 @@ layouts = function ()
     lo = add_layout('title')
     lo.geometry = geo
     lo.style = string.format('%s{\\clip(%f,%f,%f,%f)}', osc_styles.Title,
-								geo.x, geo.y - geo.h, geo.x + geo.w , geo.y)
+								geo.x, geo.y - geo.h, geo.x + geo.w , geo.y + 5)
 	lo.alpha[3] = 0
     lo.button.maxchars = geo.w / 23
 end
