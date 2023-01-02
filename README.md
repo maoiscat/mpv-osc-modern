@@ -1,6 +1,14 @@
 # mpv-osc-modern
 
-NOTICE: Anyone want a thumbnail may try the other ''with.thumbfast'' branch.
+NOTICE: 
+    
+    1. Anyone wants a thumbnail may try the other ''with.thumbfast'' branch.
+    
+    2. This project may not be active further, since I have made an [oscf](https://github.com/maoiscat/mpv-osc-framework) tool to develop custom osc scripts more easily.
+    
+    3. If you are cool, and know how to do the lua programming, you may try the [oscf](https://github.com/maoiscat/mpv-osc-framework) version of this osc.
+    
+    4. There are other cool osc scripts like [mpv-osc-orange](https://github.com/maoiscat/mpv-osc-orange) and [mpv-osc-simple](https://github.com/maoiscat/mpv-osc-simple) worth trying.
 
 VER 1.1.1
 
