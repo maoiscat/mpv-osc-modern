@@ -36,7 +36,6 @@ local user_opts = {
                                 -- to be shown as OSC title
     showtitle = true,            -- show title and no hide timeout on pause
     timetotal = true,              -- display total time instead of remaining time?
-    timems = false,             -- display timecodes with milliseconds
     visibility = 'auto',        -- only used at init to set visibility_mode(...)
     windowcontrols = 'auto',    -- whether to show window controls
     volumecontrol = true,       -- whether to show mute button and volumne slider
@@ -116,7 +115,6 @@ local state = {
     active_element = nil,                   -- nil = none, 0 = background, 1+ = see elements[]
     active_event_source = nil,              -- the 'button' that issued the current event
     rightTC_trem = not user_opts.timetotal, -- if the right timecode should display total or remaining time
-    tc_ms = user_opts.timems,               -- should the timecodes display their time with milliseconds
     mp_screen_sizeX, mp_screen_sizeY,       -- last screen-resolution, to detect resolution changes to issue reINITs
     initREQ = false,                        -- is a re-init request pending?
     last_mouseX, last_mouseY,               -- last mouse position, to detect significant mouse movement
@@ -1538,34 +1536,16 @@ function osc_init()
 		end
     -- tc_left (current pos)
     ne = new_element('tc_left', 'button')
-    ne.content = function ()
-        if (state.tc_ms) then
-            return (mp.get_property_osd('playback-time/full'))
-        else
-            return (mp.get_property_osd('playback-time'))
-        end
-    end
-    ne.eventresponder['mbtn_left_up'] = function ()
-        state.tc_ms = not state.tc_ms
-        request_init()
-    end
+    ne.content = function () return (mp.get_property_osd('playback-time')) end
 
     -- tc_right (total/remaining time)
     ne = new_element('tc_right', 'button')
     ne.content = function ()
         if (mp.get_property_number('duration', 0) <= 0) then return '--:--:--' end
         if (state.rightTC_trem) then
-            if (state.tc_ms) then
-                return ('-'..mp.get_property_osd('playtime-remaining/full'))
-            else
-                return ('-'..mp.get_property_osd('playtime-remaining'))
-            end
+            return ('-'..mp.get_property_osd('playtime-remaining'))
         else
-            if (state.tc_ms) then
-                return (mp.get_property_osd('duration/full'))
-            else
-                return (mp.get_property_osd('duration'))
-            end
+            return (mp.get_property_osd('duration'))
         end
     end
     ne.eventresponder['mbtn_left_up'] =
