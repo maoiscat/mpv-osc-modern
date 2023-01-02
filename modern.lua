@@ -41,6 +41,7 @@ local user_opts = {
     volumecontrol = true,       -- whether to show mute button and volumne slider
     processvolume = true,		-- volue slider show processd volume
     language = 'eng',            -- eng=English, chs=Chinese
+    thumbpad = 4,               -- thumbnail border size
 }
 
 -- Localization
@@ -669,7 +670,7 @@ function render_elements(master_ass)
                         if osd_w then
                             local r_w, r_h = get_virt_scale_factor()
 
-                            local thumbPad = 4
+                            local thumbPad = user_opts.thumbpad
                             local thumbMarginX = 18 / r_w
                             local thumbMarginY = 30
                             local tooltipBgColor = "FFFFFF"
