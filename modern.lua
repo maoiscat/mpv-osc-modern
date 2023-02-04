@@ -1595,7 +1595,11 @@ end
 function show_osc()
     -- show when disabled can happen (e.g. mouse_move) due to async/delayed unbinding
     if not state.enabled then return end
-
+	
+	-- Subtitle offset
+	local w, h = mp.get_osd_size()
+	mp.commandv('set', 'sub-pos', math.floor(100-(120/h*100)))
+	
     msg.trace('show_osc')
     --remember last time of invocation (mouse move)
     state.showtime = mp.get_time()
@@ -1609,6 +1613,10 @@ end
 
 function hide_osc()
     msg.trace('hide_osc')
+	
+	-- Subtitle offset
+	mp.commandv('set', 'sub-pos', 100)
+	
     if not state.enabled then
         -- typically hide happens at render() from tick(), but now tick() is
         -- no-op and won't render again to remove the osc, so do that manually.
