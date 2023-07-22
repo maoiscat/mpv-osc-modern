@@ -1669,8 +1669,18 @@ function request_tick()
     end
 end
 
+-- check if cursor is in player
+function cursor_in_player()
+    local x = state.last_mouseX
+    local y = state.last_mouseY
+    local gap = 32
+    local x_in = x ~= nil and x > gap and x < (osc_param.playresx - gap)
+    local y_in = y ~= nil and y > gap and y < (osc_param.playresy - gap)
+    return x_in and y_in
+end
+
 function mouse_leave()
-    if get_hidetimeout() >= 0 then
+    if get_hidetimeout() >= 0 and cursor_in_player() == false then
         hide_osc()
     end
     -- reset mouse position
