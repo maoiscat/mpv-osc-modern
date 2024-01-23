@@ -1628,7 +1628,19 @@ function osc_visible(visible)
     if state.osc_visible ~= visible then
         state.osc_visible = visible
     end
+	subtitle_fix()
     request_tick()
+end
+
+function subtitle_fix()
+	if state.osc_visible == true and (state.fullscreen == false or user_opts.showfullscreen) then
+		local w, h = mp.get_osd_size()
+		if h > 0 then
+			mp.commandv('set', 'sub-pos', math.floor(100-(80/h*100)))
+		end
+	else
+		mp.commandv('set', 'sub-pos', 100)
+	end	
 end
 
 function pause_state(name, enabled)
@@ -1685,6 +1697,7 @@ end
 
 -- Like request_init(), but also request an immediate update
 function request_init_resize()
+	subtitle_fix() -- When OSC always show
     request_init()
     -- ensure immediate update
     state.tick_timer:kill()
