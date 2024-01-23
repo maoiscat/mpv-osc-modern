@@ -11,7 +11,7 @@ local utils = require 'mp.utils'
 -- Parameters
 --
 -- default user option values
--- may change them in osc.conf
+-- may change them in modern.conf
 local user_opts = {
     showwindowed = true,        -- show OSC when windowed?
     showfullscreen = true,      -- show OSC when fullscreen?
@@ -78,7 +78,7 @@ local language = {
     }
 }
 -- read options from config and command-line
-opt.read_options(user_opts, 'osc', function(list) update_options(list) end)
+opt.read_options(user_opts, 'modern', function(list) update_options(list) end)
 -- apply lang opts
 local texts = language[user_opts.language]
 local osc_param = { -- calculated by osc_init()
